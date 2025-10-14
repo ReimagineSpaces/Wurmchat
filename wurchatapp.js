@@ -1,61 +1,54 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const btnHello = document.getElementById("btnHello");
-  const btnFeed = document.getElementById("btnFeed");
-  const feedingUI = document.getElementById("feedingUI");
-  const mainButtons = document.getElementById("mainButtons");
-  const thoughtBubble = document.getElementById("thoughtBubble");
+  const helloBtn = document.getElementById("helloBtn");
+  const feedDone = document.getElementById("feedDone");
   const wormVideo = document.getElementById("wormVideo");
   const wormVideoSource = document.getElementById("wormVideoSource");
+  const thoughtBubble = document.getElementById("thoughtBubble");
   const foodCarousel = document.getElementById("foodCarousel");
   const choppingBoard = document.getElementById("choppingBoard");
   const cupContainer = document.getElementById("cupContainer");
-  const btnBack = document.getElementById("btnBack");
 
-  // --- 🥦 Food mock data
+  // ---  Mock food data
   const foods = [
     { name: "Tomate", img: "static/foods/Tomate.jpg" },
     { name: "Rucola", img: "static/foods/Rucola.jpg" },
     { name: "Melone", img: "static/foods/Melone.jpg" },
     { name: "Gurke", img: "static/foods/Gurke.jpg" },
-    { name: "Kürbis", img: "static/foods/Kuerbis.jpg" }
+    { name: "Kürbis", img: "static/foods/Kuerbis.jpg" },
+    { name: "Eis", img: "static/foods/Eis.jpg" }
   ];
 
-  // --- 🎞️ Worm state mapping
+  // --- Mock API states
   const wormStates = {
-    happy: { video: "static/worm_happy.mp4", thought: "static/icons/smile.png" },
-    tooDry: { video: "static/worm_dry.mp4", thought: "static/icons/dry.png" },
-    tooCold: { video: "static/worm_cold.mp4", thought: "static/icons/snowflake.png" },
-    hungry: { video: "static/worm_hungry.mp4", thought: "static/icons/Rucola.jpg" }
+    happy: { video: "static/worm_happy.mp4", thought: "static/icons/cup_full.png" },
+    tooDry: { video: "static/worm_cold.mp4", thought: "static/icons/cup_full.png" },
+    hungry: { video: "static/worm_hungry.mp4", thought: "static/icons/Melone.png" }
   };
 
-  // --- Mock function simulating ThingsBoard API response
   async function fetchWormState() {
-    // in real version: return fetch(THINGSBOARD_URL).then(res => res.json());
-    // mock random state
     const keys = Object.keys(wormStates);
     const randomKey = keys[Math.floor(Math.random() * keys.length)];
-    console.log("Mock API: returning state", randomKey);
     return wormStates[randomKey];
   }
 
-  // --- 🔄 Update worm UI
   async function updateWormState() {
     const state = await fetchWormState();
     wormVideoSource.src = state.video;
     wormVideo.load();
-    thoughtBubble.innerHTML = `<img src="${state.thought}" alt="thought" />`;
+    thoughtBubble.innerHTML = `<img src="${state.thought}" alt="thought">`;
   }
 
-  // periodic check
-  setInterval(updateWormState, 20000); // every 20 sec
-  updateWormState(); // initial load
+  helloBtn.onclick = async () => {
+    wormVideoSource.src = "static/hello.mp4";
+    wormVideo.load();
+    await updateWormState(); // simulate API call after hello
+  };
 
   // --- Populate food carousel
   foods.forEach(f => {
     const img = document.createElement("img");
     img.src = f.img;
     img.alt = f.name;
-    img.classList.add("food-item");
     img.title = f.name;
     img.addEventListener("click", () => {
       const clone = img.cloneNode(true);
@@ -64,42 +57,29 @@ document.addEventListener("DOMContentLoaded", () => {
     foodCarousel.appendChild(img);
   });
 
-  // --- Carousel scroll
-  let currentOffset = 0;
-  const itemWidth = 85;
-  document.getElementById("nextFood").onclick = () => {
-    if (currentOffset > -((foodCarousel.children.length - 2) * itemWidth))
-      currentOffset -= itemWidth;
-    foodCarousel.style.transform = `translateX(${currentOffset}px)`;
-  };
-  document.getElementById("prevFood").onclick = () => {
-    if (currentOffset < 0) currentOffset += itemWidth;
-    foodCarousel.style.transform = `translateX(${currentOffset}px)`;
-  };
+  // initialize Glider
+  new Glider(foodCarousel, {
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    draggable: true,
+    rewind: true
+  });
 
-  // --- Cup selection
+  // --- Cup selector
   for (let i = 1; i <= 3; i++) {
     const cup = document.createElement("img");
     cup.src = "static/foods/cup.png";
-    cup.title = `${i} Becher`;
-    cup.addEventListener("click", () =>
-      alert(`Danke für ${i} Becher!`)
-    );
+    cup.dataset.amount = i;
+    cup.addEventListener("click", () => {
+      document.querySelectorAll(".cup-container img").forEach(c => c.classList.remove("selected"));
+      cup.classList.add("selected");
+    });
     cupContainer.appendChild(cup);
   }
 
-  // --- Buttons
-  btnHello.onclick = async () => {
-    await updateWormState();
-  };
-
-  btnFeed.onclick = () => {
-    mainButtons.classList.add("hidden");
-    feedingUI.classList.remove("hidden");
-  };
-
-  btnBack.onclick = () => {
-    feedingUI.classList.add("hidden");
-    mainButtons.classList.remove("hidden");
+  // --- Feed done action
+  feedDone.onclick = () => {
+    choppingBoard.innerHTML = "";
+    document.querySelectorAll(".cup-container img").forEach(c => c.classList.remove("selected"));
   };
 });

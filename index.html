@@ -4,48 +4,49 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wurm Chat</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="glider.min.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="app">
-    <div class="game-container">
-      <!-- Worm video frame -->
-      <div class="worm-frame">
-        <video id="wormVideo" autoplay loop muted playsinline>
-          <source id="wormVideoSource" src="static/worm_cold.mp4" type="video/mp4" />
-        </video>
-        <div class="thought-bubble" id="thoughtBubble">
-          <img src="static/icons/Melone.png" alt="thought" />
-        </div>
-      </div>
+  <div id="app" class="app-container">
+    
+    <!-- 👋 Hello interaction -->
+    <div class="hello-section">
+      <img src="static/icons/hand.png" id="helloBtn" alt="Hallo" class="icon-btn">
+      <span class="label">Sag Hallo!</span>
+    </div>
 
-      <!-- Interaction buttons -->
-      <div class="interaction-buttons" id="mainButtons">
-        <button class="btn" id="btnHello">👋 Hallo!</button>
-        <button class="btn" id="btnFeed">🍎 Füttern</button>
-      </div>
-
-      <!-- Feeding interface -->
-      <div class="feeding-ui hidden" id="feedingUI">
-        <h2>Was möchtest du den Würmern geben?</h2>
-        <div class="carousel">
-          <button class="carousel-btn left" id="prevFood">⬅</button>
-          <div class="carousel-track" id="foodCarousel"></div>
-          <button class="carousel-btn right" id="nextFood">➡</button>
-        </div>
-
-        <div class="chopping-board" id="choppingBoard"></div>
-
-        <div class="cup-selector">
-          <h3>Wie viele Becher?</h3>
-          <div id="cupContainer"></div>
-        </div>
-
-        <button class="btn back" id="btnBack">⬅ Zurück</button>
+    <!-- 🪱 Worm video -->
+    <div class="worm-frame">
+      <video id="wormVideo" autoplay loop muted playsinline>
+        <source id="wormVideoSource" src="static/worm_happy.mp4" type="video/mp4" />
+      </video>
+      <div class="thought-bubble" id="thoughtBubble">
+        <img src="static/icons/Melone.png" alt="thought">
       </div>
     </div>
+
+    <!-- Feeding area -->
+    <div class="feeding-section">
+      <h2>Füttere die Würmer</h2>
+
+      <div class="glider-contain">
+        <div class="glider" id="foodCarousel"></div>
+      </div>
+
+      <div class="chopping-board" id="choppingBoard"></div>
+
+      <div class="cups-section">
+        <h3>Wie viele Becher?</h3>
+        <div id="cupContainer" class="cup-container"></div>
+      </div>
+
+      <img src="static/icons/give_cup.png" id="feedDone" alt="Fertig" class="icon-btn">
+    </div>
+
   </div>
 
+  <script src="glider.min.js"></script>
   <script src="wurchatapp.js"></script>
 </body>
 </html>
