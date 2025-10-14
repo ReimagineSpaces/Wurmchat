@@ -1,8 +1,8 @@
 :root {
-  --bg-color: #e6f9f0;
+  --bg-color: #86f3c0;
   --frame-color: #ffeecb;
   --rim-color: #d7a96b;
-  --accent-color: #66cdaa;
+  --accent-color: #4eb89d;
   --btn-color: #ffe680;
   --btn-hover: #ffcc00;
 }
@@ -21,19 +21,20 @@ body {
   justify-content: center;
 }
 
-/* base app container  */
 .app-container {
   width: 95%;
   max-width: 520px;
+  height: 100vh; /* full screen column */
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   gap: 1rem;
-  padding: 1rem 0 3rem;
+  margin: 0 auto;
+  padding: 1rem 0 2rem;
   box-sizing: border-box;
-  /* default: allow page scrolling on small screens */
-  min-height: auto;
-  overflow: visible;
+  overflow-x: hidden;  /* prevents horizontal scrollbars */
+  overflow-y: hidden;  /* no vertical scrollbars unless explicitly needed */
 }
 
 /* DESKTOP: make the column use the full viewport height
@@ -218,27 +219,29 @@ body {
   box-shadow: 0 0 10px var(--accent-color);
 }
 
-/* Feeding done section */
+/* Feeding-done section */
 .feeding-done {
-  margin-top: 1rem;
-  padding: 0.8rem;
-  width: 100%;
+  width: 100%;                /* ensures it fits within the column */
+  max-width: 480px;
+  box-sizing: border-box;
+  border: 4px double var(--rim-color);
+  border-radius: 16px;
   background: repeating-linear-gradient(
-    -45deg,
-    rgba(255, 230, 128, 0.2),
-    rgba(255, 230, 128, 0.2) 10px,
-    rgba(255, 255, 255, 0.5) 10px,
-    rgba(255, 255, 255, 0.5) 20px
+    45deg,
+    var(--frame-color),
+    var(--frame-color) 10px,
+    var(--bg-color) 10px,
+    var(--bg-color) 20px
   );
-  border-top: 3px solid var(--rim-color);
-  border-bottom: 3px solid var(--rim-color);
-  border-radius: 10px;
+  padding: 1rem;
   text-align: center;
-  color: #4b3a1f;
+  margin-top: 1rem;
+  flex-shrink: 0;             /* prevents this from pushing layout height */
+  overflow: hidden;
 }
 
 .feeding-done img {
-  width: 70px;
+  width: 70%;
   height: auto;
   margin-bottom: 0.5rem;
 }
