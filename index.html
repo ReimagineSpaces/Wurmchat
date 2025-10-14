@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Worm Tamagotchi</title>
-  <script defer src="app.js"></script>
+  <title>Wurmchatbot</title>
+  <script defer src="wurchatapp.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="flex flex-col items-center bg-green-100 min-h-screen py-6">
-  <h1 class="text-3xl font-bold text-green-800 mb-4">🪱 Worm Friend</h1>
+  <h1 class="text-3xl font-bold text-green-800 mb-4">Wurmi</h1>
 
   <div id="game" class="relative bg-white rounded-2xl shadow-xl p-4 w-80 flex flex-col items-center">
     <!-- Worm video -->
@@ -24,10 +24,10 @@
     <!-- Buttons -->
     <div class="flex justify-around w-full mt-4">
       <button id="btnFeel" class="bg-green-500 text-white px-3 py-1 rounded-xl hover:bg-green-600">
-        How do you feel?
+        Wie geht es euch?
       </button>
       <button id="btnFeed" class="bg-amber-400 text-white px-3 py-1 rounded-xl hover:bg-amber-500">
-        Feed 🍎
+        Füttern 🍎
       </button>
     </div>
   </div>
@@ -37,9 +37,9 @@
     <div class="bg-white p-6 rounded-xl shadow-xl w-72">
       <h2 class="text-xl mb-2">Feed your worm</h2>
       <select id="foodType" class="border rounded w-full p-1 mb-2">
-        <option value="apple">🍎 Apple</option>
-        <option value="banana">🍌 Banana</option>
-        <option value="carrot">🥕 Carrot</option>
+        <option value="Tomate">Tomate</option>
+        <option value="Rucola">Rucola</option>
+        <option value="Melone">Melone</option>
       </select>
       <input id="foodAmount" type="number" min="1" max="3" value="1"
         class="border rounded w-full p-1 mb-3" />
