@@ -44,18 +44,34 @@ document.addEventListener("DOMContentLoaded", () => {
     await updateWormState(); // simulate API call after hello
   };
 
-  // --- Populate food carousel
-  foods.forEach(f => {
-    const img = document.createElement("img");
-    img.src = f.img;
-    img.alt = f.name;
-    img.title = f.name;
-    img.addEventListener("click", () => {
-      const clone = img.cloneNode(true);
-      choppingBoard.appendChild(clone);
+// --- Populate food carousel
+const placedFoods = new Set(); // track foods already on board
+
+foods.forEach(f => {
+  const img = document.createElement("img");
+  img.src = f.img;
+  img.alt = f.name;
+  img.title = f.name;
+  img.classList.add("food-item");
+
+  img.addEventListener("click", () => {
+    // check if food is already on the board
+    if (placedFoods.has(f.name)) return;
+
+    const clone = img.cloneNode(true);
+    clone.addEventListener("click", () => {
+      // remove from board and update set
+      choppingBoard.removeChild(clone);
+      placedFoods.delete(f.name);
     });
-    foodCarousel.appendChild(img);
+
+    choppingBoard.appendChild(clone);
+    placedFoods.add(f.name);
   });
+
+  foodCarousel.appendChild(img);
+});
+
 
   // initialize Glider
   new Glider(foodCarousel, {
