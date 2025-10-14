@@ -1,5 +1,5 @@
 :root {
-  --bg-color: #86f3c0;
+  --bg-color: #a9f7d2;
   --frame-color: #ffeecb;
   --rim-color: #d7a96b;
   --accent-color: #4eb89d;
@@ -11,6 +11,7 @@
 html, body {
   height: 100%;
   margin: 0;
+  overflow-x: hidden;
 }
 
 body {
@@ -33,6 +34,7 @@ body {
   margin: 0 auto;
   padding: 1rem 0 2rem;
   box-sizing: border-box;
+  overflow: hidden;
   overflow-x: hidden;  /* prevents horizontal scrollbars */
   overflow-y: hidden;  /* no vertical scrollbars unless explicitly needed */
 }

@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const foodCarousel = document.getElementById("foodCarousel");
   const choppingBoard = document.getElementById("choppingBoard");
   const cupContainer = document.getElementById("cupContainer");
+  
 
   // ---  Mock food data
   const foods = [
@@ -155,5 +156,21 @@ function resizeBoardItems() {
   feedDone.onclick = () => {
     choppingBoard.innerHTML = "";
     document.querySelectorAll(".cup-container img").forEach(c => c.classList.remove("selected"));
+    clearChoppingBoard();
   };
+
+  function clearChoppingBoard() {
+  // Clear DOM elements
+  choppingBoard.innerHTML = "";
+
+  // Reset the list of placed foods
+  placedFoods = [];
+
+  // Optionally trigger visual feedback
+  choppingBoard.style.transition = "background-color 0.3s ease";
+  choppingBoard.style.backgroundColor = "#d7f7de";
+  setTimeout(() => {
+    choppingBoard.style.backgroundColor = "var(--frame-color)";
+  }, 300);
+}
 });
