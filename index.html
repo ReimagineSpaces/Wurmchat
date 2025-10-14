@@ -10,56 +10,53 @@
 
 <body>
   <div id="app" class="app-container">
-    
-  <!-- 👋 Hello section: stretches full width of the column -->
-  <div class="hello-section" aria-label="Say hello area">
-    <button id="sayHelloBtn" class="hand-button" aria-label="Say hello to the worm">
-      <img src="static/icons/hello.png" alt="Hand waving" />
-    </button>
-    <div class="hello-label">Hallo!</div>
-  </div>
-
-  <!-- 🪱 Worm video -->
-  <div class="worm-container">
-    <video id="wormVideo" autoplay muted loop>
-      <source src="/static/videos/idle.mp4" type="video/mp4" />
-    </video>
-    <div class="thought-bubble">
-      <img id="thoughtImage" src="/static/thoughts/Melone.png" />
+  
+    <!-- Worm video container -->
+    <div class="worm-container">
+      <video id="wormVideo" muted loop playsinline>
+        <source id="wormVideoSource" src="static/videos/idle.mp4" type="video/mp4" />
+      </video>
+      <div class="thought-bubble">
+        <img id="thoughtImage" src="static/thoughts/Melone.png" alt="Worm thought" />
+      </div>
     </div>
-  </div>
 
 
-    <!-- 👋 Hello section -->
-  <div class="hello-section">
-    <button class="hand-button" id="sayHelloBtn">
-      <img src="/static/ui/hand.png" alt="Wave Hello" />
-    </button>
-  </div>
+    <!-- Hello section -->
+    <div class="hello-section">
+      <button id="sayHelloBtn" class="hand-button">
+        <img src="static/icons/hello.png" alt="Wave Hello" />
+      </button>
+      <span class="hello-label">Hallo!</span>
+    </div>
 
     <!-- Feeding area -->
-    <div class="feeding-section">
-      <h2>Füttere die Würmer</h2>
 
-      <div class="glider-contain">
-        <div class="glider" id="foodCarousel"> </div> 
-
+    <div class="carousel-container">
+      <div id="foodCarousel" class="glider">
         <button aria-label="Previous" class="glider-prev">«</button>
         <button aria-label="Next" class="glider-next">»</button>
         <div role="tablist" class="dots"></div>
         
       </div>
 
-      <div class="chopping-board" id="choppingBoard"></div>
+    <!--  Chopping board -->
+    <div id="choppingBoard" class="chopping-board"></div>
 
-      <div class="cups-section">
-        <h3>Wie viele Becher?</h3>
-        <div id="cupContainer" class="cup-container"></div>
-      </div>
-
-      <img src="static/icons/give_cup.png" id="feedDone" alt="Fertig" class="icon-btn">
+    <!--Cups selection -->
+    <div class="cups-container">
+      <img class="cup" src="static/foods/cup.jpg" alt="1 cup" />
+      <img class="cup" src="static/foods/cup.jpg" alt="2 cups" />
+      <img class="cup" src="static/foods/cup.jpg" alt="3 cups" />
     </div>
 
+
+
+    <!-- Feeding done -->
+    <div class="feeding-done">
+      <img src="static/icons/give_cup.png" alt="fertig mit füttern" />
+      <p>Fertig!</p>
+    </div>
   </div>
 
   <script src="glider.min.js"></script>
