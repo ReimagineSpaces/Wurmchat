@@ -1,4 +1,4 @@
-const foods = ["apple", "banana", "carrot"];
+const foods = ["Tomate", "Rucola", "Melone", "Gurke", "Kuerbis"];
 const track = document.getElementById("foodTrack");
 const chosen = document.getElementById("chosenFoods");
 const cups = document.querySelectorAll(".cup");
@@ -7,7 +7,7 @@ const mainMenu = document.getElementById("mainMenu");
 
 foods.forEach(f => {
   const img = document.createElement("img");
-  img.src = `static/foods/${f}.png`;
+  img.src = `static/foods/${f}.jpg`;
   img.alt = f;
   img.onclick = () => addFood(f);
   track.appendChild(img);
