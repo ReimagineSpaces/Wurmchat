@@ -75,9 +75,14 @@ foods.forEach(f => {
 
   // initialize Glider
   new Glider(foodCarousel, {
-    slidesToShow: 5,
+    slidesToShow: 3.5,
     slidesToScroll: 1,
     draggable: true,
+    dots: '.dots',
+    arrows: {
+    prev: '.glider-prev',
+    next: '.glider-next'
+    },
     rewind: true
   });
 
