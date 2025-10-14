@@ -75,10 +75,8 @@ foods.forEach(f => {
   img.classList.add("food-item");
 
   img.addEventListener("click", () => {
-    addFoodToBoard(img.title, img.src )}
-
-
-
+    addFoodToBoard(img.title, img.src);
+  });
   foodCarousel.appendChild(img);
 });
  

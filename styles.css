@@ -48,6 +48,7 @@ body {
     padding: 20px;
     overflow: hidden;         /* prevent body scrolling; we'll scroll internal area */
   }
+}
 
 /* 🪱 Worm video section */
 .worm-container {
