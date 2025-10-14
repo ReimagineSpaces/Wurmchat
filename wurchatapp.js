@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const helloBtn = document.getElementById("helloBtn");
+ const sayHelloBtn = document.getElementById("sayHelloBtn");
   const feedDone = document.getElementById("feedDone");
   const wormVideo = document.getElementById("wormVideo");
   const wormVideoSource = document.getElementById("wormVideoSource");
   const thoughtBubble = document.getElementById("thoughtBubble");
+  const thoughtImage = document.getElementById("thoughtImage");
   const foodCarousel = document.getElementById("foodCarousel");
   const choppingBoard = document.getElementById("choppingBoard");
   const cupContainer = document.getElementById("cupContainer");
@@ -32,16 +33,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function updateWormState() {
-    const state = await fetchWormState();
-    wormVideoSource.src = state.video;
-    wormVideo.load();
-    thoughtBubble.innerHTML = `<img src="${state.thought}" alt="thought">`;
+    try {
+        const state = await fetchWormState(); // Example mockup API call (replace with ThingsBoard endpoint later)
+        wormVideoSource.src = state.video;
+        wormVideo.load();
+        thoughtBubble.innerHTML = `<img src="${state.thought}" alt="thought">`;
+        thoughtImage.src = `/static/thoughts/${state.thought}`;
+    } catch (err) {
+    console.error("Failed to update worm state:", err);
   }
 
-  helloBtn.onclick = async () => {
-    wormVideoSource.src = "static/hello.mp4";
-    wormVideo.load();
-    await updateWormState(); // simulate API call after hello
+  }
+
+  sayHelloBtn.onclick = async () => {
+  // play the "hello" animation
+  wormVideoSource.src = "/static/videos/hello.mp4";
+  wormVideo.load();
+  // trigger API update to get latest worm state
+  await updateWormState();
   };
 
 // --- Populate food carousel
@@ -78,7 +87,7 @@ foods.forEach(f => {
     slidesToShow: 3.5,
     slidesToScroll: 1,
     draggable: true,
-    dots: '.dots',
+    dots: '#resp-dots',
     arrows: {
     prev: '.glider-prev',
     next: '.glider-next'

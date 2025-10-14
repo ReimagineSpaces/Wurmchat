@@ -9,142 +9,101 @@
 
 body {
   margin: 0;
-  font-family: 'Comic Sans MS', 'Poppins', sans-serif;
-  background: linear-gradient(to bottom, #66cdaa, #b5ead7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.game-container {
+  padding: 0;
+  background-color: var(--bg-color);
+  font-family: "Nunito", sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
+  overflow-x: hidden;
+  color: #333;
+}
+
+/* 🪱 Worm video container */
+.worm-container {
   width: 90%;
   max-width: 500px;
+  aspect-ratio: 1 / 1;
+  margin-top: 20px;
+  background-color: var(--frame-color);
+  border: 10px solid var(--rim-color);
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
-.app-container {
-  width: 95%;
-  max-width: 500px;
-  text-align: center;
-  color: #2a2a2a;
+/* 🎈 Thought bubble */
+.thought-bubble {
+  position: absolute;
+  top: 5%;
+  right: 10%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid var(--rim-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.icon-btn {
-  width: 80px;
+.thought-bubble img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* 👋 Hello section */
+.hello-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.hand-button {
+  background: var(--btn-color);
+  border: 4px solid var(--rim-color);
+  border-radius: 50%;
+  padding: 10px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s, background 0.2s;
 }
 
-.icon-btn:hover {
+.hand-button:hover {
+  background: var(--btn-hover);
   transform: scale(1.1);
 }
 
-.hello-section {
+.hand-button img {
+  width: 80px;
+  height: 80px;
+}
+
+/* 🧺 Feeding area */
+.feeding-area {
+  width: 100%;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
+  margin-top: 2rem;
 }
 
-.label {
-  font-size: 1.2em;
-  margin-top: 4px;
-}
-
-.worm-frame {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border: 12px solid var(--rim-color);
-  border-radius: 40px;
+/* 🍅 Carousel */
+.carousel-container {
+  width: 90%;
   overflow: hidden;
-  background-color: var(--frame-color);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
-
-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thought-bubble {
-  position: absolute;
-  top: 8%;
-  right: 5%;
-  background-color: white;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-}
-
-.interaction-buttons {
-  margin-top: 20px;
-  display: flex;
-  gap: 20px;
-}
-
-.btn {
-  background-color: var(--btn-color);
-  border: none;
-  border-radius: 25px;
-  padding: 12px 24px;
-  font-size: 18px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: var(--btn-hover);
-}
-
-.feeding-ui {
-  margin-top: 20px;
-  width: 100%;
-}
-
-.feeding-section {
-  margin-top: 20px;
-}
-
-.hidden {
-  display: none;
-}
-
-.carousel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 15px 0;
-}
-
-.carousel-track {
-  display: flex;
-  overflow: hidden;
-  width: 220px;
-  gap: 15px;
-  transition: transform 0.3s ease;
+  margin-bottom: 1rem;
 }
 
 .food-item {
-  width: 70px;
-  height: 70px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
+  margin: 0 10px;
   cursor: pointer;
   transition: transform 0.2s;
 }
@@ -153,66 +112,41 @@ video {
   transform: scale(1.1);
 }
 
-.carousel-btn {
-  background: var(--accent-color);
-  border: none;
-  border-radius: 50%;
-  color: white;
-  font-size: 20px;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
+/* 🪵 Chopping board */
+#choppingBoard {
+  width: 90%;
+  min-height: 150px;
+  background: var(--frame-color);
+  border-radius: 20px;
+  border: 5px solid var(--rim-color);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.chopping-board {
+/* ☕ Cups */
+.cups-container {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  background-color: #ffe4b5;
-  border-radius: 20px;
-  padding: 15px;
-  min-height: 80px;
-  margin-bottom: 20px;
+  align-items: center;
+  margin-top: 1.5rem;
+  gap: 15px;
 }
 
-.cup-selector {
-  margin-bottom: 20px;
-}
-
-.cup-container img {
-  width: 60px;
+.cup {
+  width: 70px;
+  height: 70px;
+  border-radius: 15px;
+  border: 4px solid transparent;
   cursor: pointer;
-  border: 3px solid transparent;
-  border-radius: 10px;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s;
 }
 
-.cup-container img.selected {
-  border-color: #ffb347;
-}
-
-.btn.back {
-  background-color: var(--accent-color);
-  color: white;
-}
-
-.glider img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-  margin: 5px;
-  cursor: pointer;
-  border-radius: 12px;
-  border: 2px solid transparent;
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.glider {
-  margin: 10px 0;
-}
-
-.glider img:hover {
-  transform: scale(1.1);
-  border-color: #5cb85c;
+.cup.selected {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 10px var(--accent-color);
 }
