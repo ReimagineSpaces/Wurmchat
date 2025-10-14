@@ -1,53 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wurmchatbot</title>
-  <script defer src="wurchatapp.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+  <title>Wurm Chat</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="flex flex-col items-center bg-green-100 min-h-screen py-6">
-  <h1 class="text-3xl font-bold text-green-800 mb-4">Wurmi</h1>
+<body>
+  <div id="app">
+    <div class="game-container">
+      <!-- Worm video frame -->
+      <div class="worm-frame">
+        <video id="wormVideo" autoplay loop muted playsinline>
+          <source id="wormVideoSource" src="static/worm_happy.mp4" type="video/mp4" />
+        </video>
+        <div class="thought-bubble" id="thoughtBubble">
+          <img src="static/icons/hello.png" alt="thought" />
+        </div>
+      </div>
 
-  <div id="game" class="relative bg-white rounded-2xl shadow-xl p-4 w-80 flex flex-col items-center">
-    <!-- Worm video -->
-    <video id="wormVideo" class="rounded-xl w-64" autoplay loop muted playsinline>
-      <source src="static/worm_happy.mp4" type="video/mp4">
-    </video>
+      <!-- Interaction buttons -->
+      <div class="interaction-buttons" id="mainButtons">
+        <button class="btn" id="btnHello">👋 Hallo!</button>
+        <button class="btn" id="btnFeed">🍎 Füttern</button>
+      </div>
 
-    <!-- Speech bubble -->
-    <div id="bubble" class="absolute top-2 right-2 bg-white border-2 border-gray-300 rounded-2xl p-2 shadow-md text-3xl">
-      😊
-    </div>
+      <!-- Feeding interface -->
+      <div class="feeding-ui hidden" id="feedingUI">
+        <h2>Was möchtest du dem Wurm geben?</h2>
+        <div class="carousel">
+          <button class="carousel-btn left" id="prevFood">⬅</button>
+          <div class="carousel-track" id="foodCarousel"></div>
+          <button class="carousel-btn right" id="nextFood">➡</button>
+        </div>
 
-    <!-- Buttons -->
-    <div class="flex justify-around w-full mt-4">
-      <button id="btnFeel" class="bg-green-500 text-white px-3 py-1 rounded-xl hover:bg-green-600">
-        Wie geht es euch?
-      </button>
-      <button id="btnFeed" class="bg-amber-400 text-white px-3 py-1 rounded-xl hover:bg-amber-500">
-        Füttern
-      </button>
-    </div>
-  </div>
+        <div class="chopping-board" id="choppingBoard"></div>
 
-  <!-- Feed Modal -->
-  <div id="feedModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-xl shadow-xl w-72">
-      <h2 class="text-xl mb-2">Feed your worm</h2>
-      <select id="foodType" class="border rounded w-full p-1 mb-2">
-        <option value="Tomate">Tomate</option>
-        <option value="Rucola">Rucola</option>
-        <option value="Melone">Melone</option>
-      </select>
-      <input id="foodAmount" type="number" min="1" max="3" value="1"
-        class="border rounded w-full p-1 mb-3" />
-      <div class="flex justify-between">
-        <button id="sendFeed" class="bg-amber-500 text-white px-3 py-1 rounded hover:bg-amber-600">Feed</button>
-        <button id="cancelFeed" class="text-gray-600 hover:underline">Cancel</button>
+        <div class="cup-selector">
+          <h3>Wie viele Becher?</h3>
+          <div id="cupContainer"></div>
+        </div>
+
+        <button class="btn back" id="btnBack">⬅ Zurück</button>
       </div>
     </div>
   </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
