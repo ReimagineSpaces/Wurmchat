@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Cup selector
   for (let i = 1; i <= 3; i++) {
     const cup = document.createElement("img");
-    cup.src = "static/foods/cup.png";
+    cup.src = "static/foods/cup.jpg";
     cup.dataset.amount = i;
     cup.addEventListener("click", () => {
       document.querySelectorAll(".cup-container img").forEach(c => c.classList.remove("selected"));
