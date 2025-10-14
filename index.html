@@ -7,24 +7,35 @@
   <link rel="stylesheet" href="glider.min.css">
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <div id="app" class="app-container">
     
-    <!-- 👋 Hello interaction -->
-    <div class="hello-section">
-      <img src="static/icons/hello.png" id="helloBtn" alt="Hallo" class="icon-btn">
-      <span class="label">Sag Hallo!</span>
-    </div>
+  <!-- 👋 Hello section: stretches full width of the column -->
+  <div class="hello-section" aria-label="Say hello area">
+    <button id="sayHelloBtn" class="hand-button" aria-label="Say hello to the worm">
+      <img src="static/icons/hello.png" alt="Hand waving" />
+    </button>
+    <div class="hello-label">Hallo!</div>
+  </div>
 
-    <!-- 🪱 Worm video -->
-    <div class="worm-frame">
-      <video id="wormVideo" autoplay loop muted playsinline>
-        <source id="wormVideoSource" src="static/worm_happy.mp4" type="video/mp4" />
-      </video>
-      <div class="thought-bubble" id="thoughtBubble">
-        <img src="static/icons/Melone.png" alt="thought">
-      </div>
+  <!-- 🪱 Worm video -->
+  <div class="worm-container">
+    <video id="wormVideo" autoplay muted loop>
+      <source src="/static/videos/idle.mp4" type="video/mp4" />
+    </video>
+    <div class="thought-bubble">
+      <img id="thoughtImage" src="/static/thoughts/Melone.png" />
     </div>
+  </div>
+
+
+    <!-- 👋 Hello section -->
+  <div class="hello-section">
+    <button class="hand-button" id="sayHelloBtn">
+      <img src="/static/ui/hand.png" alt="Wave Hello" />
+    </button>
+  </div>
 
     <!-- Feeding area -->
     <div class="feeding-section">
@@ -32,7 +43,7 @@
 
       <div class="glider-contain">
         <div class="glider" id="foodCarousel"> </div> 
-        
+
         <button aria-label="Previous" class="glider-prev">«</button>
         <button aria-label="Next" class="glider-next">»</button>
         <div role="tablist" class="dots"></div>
