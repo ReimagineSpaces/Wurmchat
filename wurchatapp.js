@@ -18,6 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Kürbis", img: "static/foods/Kuerbis.jpg" },
     { name: "Eis", img: "static/foods/Eis.jpg" }
   ];
+  let selectedFoods = [];
+
+// viewport-height fix (put at top of your app JS)
+  function setVhVar() {
+  document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    }
+   
+  setVhVar();
+  window.addEventListener('resize', setVhVar);
 
   // --- Mock API states
   const wormStates = {
@@ -41,8 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
         thoughtImage.src = `/static/thoughts/${state.thought}`;
     } catch (err) {
     console.error("Failed to update worm state:", err);
-  }
-
+    }
   }
 
   sayHelloBtn.onclick = async () => {
@@ -52,6 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // trigger API update to get latest worm state
   await updateWormState();
   };
+
+
+
 
 // --- Populate food carousel
 const placedFoods = new Set(); // track foods already on board
@@ -64,23 +75,13 @@ foods.forEach(f => {
   img.classList.add("food-item");
 
   img.addEventListener("click", () => {
-    // check if food is already on the board
-    if (placedFoods.has(f.name)) return;
+    addFoodToBoard(img.title, img.src )}
 
-    const clone = img.cloneNode(true);
-    clone.addEventListener("click", () => {
-      // remove from board and update set
-      choppingBoard.removeChild(clone);
-      placedFoods.delete(f.name);
-    });
 
-    choppingBoard.appendChild(clone);
-    placedFoods.add(f.name);
-  });
 
   foodCarousel.appendChild(img);
 });
-
+ 
 
   // initialize Glider
   new Glider(foodCarousel, {
@@ -94,6 +95,51 @@ foods.forEach(f => {
     },
     rewind: true
   });
+
+// Add food to board
+function addFoodToBoard(foodName, foodImgSrc) {
+  // Prevent duplicates
+  if (selectedFoods.find(f => f.name === foodName)) return;
+
+  const img = document.createElement("img");
+  img.src = foodImgSrc;
+  img.alt = foodName;
+  img.dataset.name = foodName;
+
+  // Click to remove
+  img.onclick = () => removeFoodFromBoard(foodName);
+
+  choppingBoard.appendChild(img);
+  selectedFoods.push({ name: foodName, element: img });
+
+  resizeBoardItems();
+}
+// Remove food
+function removeFoodFromBoard(foodName) {
+  const index = selectedFoods.findIndex(f => f.name === foodName);
+  if (index !== -1) {
+    choppingBoard.removeChild(selectedFoods[index].element);
+    selectedFoods.splice(index, 1);
+    resizeBoardItems();
+  }
+}
+
+// Resize dynamically based on count
+function resizeBoardItems() {
+  const count = selectedFoods.length;
+  if (count === 0) return;
+
+  let size;
+  if (count <= 3) size = 90;
+  else if (count <= 6) size = 70;
+  else if (count <= 9) size = 55;
+  else size = 45;
+
+  selectedFoods.forEach(f => {
+    f.element.style.width = `${size}px`;
+    f.element.style.height = `${size}px`;
+  });
+}
 
   // --- Cup selector
   for (let i = 1; i <= 3; i++) {

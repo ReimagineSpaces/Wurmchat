@@ -166,19 +166,32 @@ body {
   transform: scale(1.1);
 }
 
-/* 🪵 Chopping board */
+/* Chopping board container */
 .chopping-board {
   width: 100%;
-  min-height: 120px;
-  background: var(--frame-color);
-  border-radius: 20px;
-  border: 5px solid var(--rim-color);
+  max-width: 480px;            /* aligns nicely with 520px app-container */
+  height: 200px;               /* fixed height for desktop */
+  background-color: var(--frame-color);
+  background-image: url("/static/board_texture.png"); /* optional nice texture */
+  background-size: cover;
+  border: 6px solid var(--rim-color);
+  border-radius: 16px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.15);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  padding: 10px;
-  gap: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Food images on the chopping board */
+.chopping-board img {
+  transition: all 0.2s ease-in-out;
+  margin: 4px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
 }
 
 /* ☕ Cups */
