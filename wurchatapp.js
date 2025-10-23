@@ -211,10 +211,12 @@ function showScreen(screenId) {
   if (wormContainer) wormContainer.style.display = 'none';
   if (helloSection) helloSection.style.display = 'none';
 
-  // show feeding-area wrapper
+  // show feeding-area wrapper (force visible)
   if (feedingArea) {
-    feedingArea.style.display = ''; // let CSS control layout
+    feedingArea.style.display = 'flex'; // <-- force visible (was still hidden by CSS)
     feedingArea.setAttribute('aria-hidden', 'false');
+    // ensure vertical layout inside feeding area
+    feedingArea.style.flexDirection = 'column';
   }
 
   // hide all screens first
@@ -227,7 +229,7 @@ function showScreen(screenId) {
   // show selected screen
   const target = document.getElementById(screenId);
   if (target) {
-    target.style.display = '';
+    target.style.display = ''; // let the section's default layout (block/section) apply
     target.setAttribute('aria-hidden', 'false');
   }
 }
@@ -239,8 +241,9 @@ function showHome() {
 
   // hide feeding-area and contained screens
   if (feedingArea) {
-    feedingArea.style.display = 'none';
+    feedingArea.style.display = 'none'; // hide again
     feedingArea.setAttribute('aria-hidden', 'true');
+    feedingArea.style.flexDirection = '';
   }
   [feedingScreen, learnScreen, overviewScreen].forEach(s => {
     if (!s) return;
