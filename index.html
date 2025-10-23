@@ -16,7 +16,7 @@
       <video id="wormVideo" muted loop playsinline>
         <source id="wormVideoSource" src="static/videos/idle.mp4" type="video/mp4" />
       </video>
-      <div class="thought-bubble">
+      <div id="thoughtBubble" class="thought-bubble">
         <img id="thoughtImage" src="static/thoughts/Melone.png" alt="Worm thought" />
       </div>
     </div>
@@ -46,7 +46,7 @@
       <div id="choppingBoard" class="chopping-board"></div>
 
       <!--Cups selection -->
-      <div class="cups-container">
+      <div id="cupContainer" class="cups-container">
         <img class="cup" src="static/foods/cup.jpg" alt="1 cup" />
         <img class="cup" src="static/foods/cup.jpg" alt="2 cups" />
         <img class="cup" src="static/foods/cup.jpg" alt="3 cups" />
@@ -55,8 +55,37 @@
 
 
       <!-- Feeding done -->
-      <div class="feeding-done">
+      <div id="feedDone" class="feeding-done">
         <img src="static/icons/give_cup.png" alt="fertig mit füttern" class="clickable"/>
+      </div>
+    </div>
+    
+    <!-- Footer menu (hidden until user interacts) -->
+    <nav id="footerMenu" class="footer-menu" aria-hidden="true">
+      <button class="menu-btn" id="feedBtn" onclick="feedAction()" aria-label="Füttern">
+        <img src="static/icons/cup_full.png" alt="Füttern" />
+        <span>Füttern</span>
+      </button>
+      <button class="menu-btn" id="learnBtn" onclick="learnAction()" aria-label="Lernen">
+        <img src="static/icons/hello.png" alt="Lernen" />
+        <span>Lernen</span>
+      </button>
+      <button class="menu-btn" id="overviewBtn" onclick="overviewAction()" aria-label="Übersicht">
+        <img src="static/icons/give_cup.png" alt="Übersicht" />
+        <span>Übersicht</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Feed window (overlay) - feeding-area will be moved here when user opens Feed -->
+  <div id="feedWindow" class="feed-window" aria-hidden="true">
+    <div class="feed-panel">
+      <header class="feed-panel-header">
+        <button id="closeFeedWindow" class="close-feed" aria-label="Schließen">✕</button>
+        <h3>Füttern</h3>
+      </header>
+      <div id="feedPanelBody" class="feed-panel-body">
+        <!-- feeding-area will be appended here dynamically by JS -->
       </div>
     </div>
   </div>
