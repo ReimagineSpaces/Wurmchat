@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
- const sayHelloBtn = document.getElementById("sayHelloBtn");
+  const sayHelloBtn = document.getElementById("sayHelloBtn");
   const feedDone = document.getElementById("feedDone");
   const wormVideo = document.getElementById("wormVideo");
   const wormVideoSource = document.getElementById("wormVideoSource");
@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const feedingScreen = document.getElementById('feedingScreen');
   const learnScreen = document.getElementById('learnScreen');
   const overviewScreen = document.getElementById('overviewScreen');
-  
 
   // ---  Mock food data
   const foods = [
@@ -26,12 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Eis", img: "static/foods/Eis.jpg" }
   ];
   let selectedFoods = [];
+  const placedFoods = new Set(); // track foods already on board
 
-// viewport-height fix (put at top of your app JS)
+  // viewport-height fix
   function setVhVar() {
-  document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-    }
-   
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+  }
   setVhVar();
   window.addEventListener('resize', setVhVar);
 
@@ -39,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const wormStates = {
     happy: { video: "static/videos/worm_happy.mp4", thought: "static/icons/cup_full.png" },
     tooDry: { video: "static/videos/worm_cold.mp4", thought: "static/icons/cup_full.png" },
-    hungry: { video: "static/videos/worm_hungry.mp4", thought: "static/icons/Melone.png" }
+    hungry: { video: "static/videos/worm_hungry.mp4", thought: "static/thoughts/Melone.png" }
   };
 
   async function fetchWormState() {
@@ -50,331 +49,223 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function updateWormState() {
     try {
-        const state = await fetchWormState(); // Example mockup API call (replace with ThingsBoard endpoint later)
+      const state = await fetchWormState();
+      if (wormVideoSource) {
         wormVideoSource.src = state.video;
-        wormVideo.load();
-        thoughtBubble.innerHTML = `<img src="${state.thought}" alt="thought">`;
-        thoughtImage.src = `/static/thoughts/${state.thought}`;
+        if (wormVideo) wormVideo.load();
+      }
+      // thoughtBubble expects a full path; wormStates.thought should be a path
+      if (thoughtBubble) thoughtBubble.innerHTML = `<img src="${state.thought}" alt="thought">`;
+      if (thoughtImage) thoughtImage.src = state.thought;
     } catch (err) {
-    console.error("Failed to update worm state:", err);
+      console.error("Failed to update worm state:", err);
     }
   }
 
-  sayHelloBtn.onclick = async () => {
-  // play the "hello" animation
-  wormVideoSource.src = "/static/videos/hello.mp4";
-  wormVideo.load();
-  // trigger API update to get latest worm state
-  await updateWormState();
-  };
-
-
-
-
-// --- Populate food carousel
-const placedFoods = new Set(); // track foods already on board
-
-foods.forEach(f => {
-  const img = document.createElement("img");
-  img.src = f.img;
-  img.alt = f.name;
-  img.title = f.name;
-  img.classList.add("food-item");
-
-  img.addEventListener("click", () => {
-    addFoodToBoard(img.title, img.src);
-  });
-  foodCarousel.appendChild(img);
-});
- 
-
-  // initialize Glider
-  new Glider(foodCarousel, {
-    slidesToShow: 3.5,
-    slidesToScroll: 1,
-    draggable: true,
-    dots: '#resp-dots',
-    arrows: {
-    prev: '.glider-prev',
-    next: '.glider-next'
-    },
-    rewind: true
+  sayHelloBtn?.addEventListener('click', async () => {
+    if (wormVideoSource) {
+      wormVideoSource.src = "/static/videos/hello.mp4";
+      if (wormVideo) wormVideo.load();
+    }
+    await updateWormState();
   });
 
-// Add food to board
-function addFoodToBoard(foodName, foodImgSrc) {
-  // Prevent duplicates
-  if (selectedFoods.find(f => f.name === foodName)) return;
+  // --- Populate food carousel (single pass)
+  if (foodCarousel) {
+    foods.forEach(f => {
+      const img = document.createElement("img");
+      img.src = f.img;
+      img.alt = f.name;
+      img.title = f.name;
+      img.classList.add("food-item");
+      img.addEventListener("click", () => addFoodToBoard(img.title, img.src));
+      foodCarousel.appendChild(img);
+    });
 
-  const img = document.createElement("img");
-  img.src = foodImgSrc;
-  img.alt = foodName;
-  img.dataset.name = foodName;
+    // initialize Glider safely if library loaded
+    if (typeof Glider !== 'undefined') {
+      new Glider(foodCarousel, {
+        slidesToShow: 3.5,
+        slidesToScroll: 1,
+        draggable: true,
+        dots: '#resp-dots',
+        arrows: { prev: '.glider-prev', next: '.glider-next' },
+        rewind: true
+      });
+    }
+  }
 
-  // Click to remove
-  img.onclick = () => removeFoodFromBoard(foodName);
-
-  choppingBoard.appendChild(img);
-  selectedFoods.push({ name: foodName, element: img });
-
-  resizeBoardItems();
-}
-// Remove food
-function removeFoodFromBoard(foodName) {
-  const index = selectedFoods.findIndex(f => f.name === foodName);
-  if (index !== -1) {
-    choppingBoard.removeChild(selectedFoods[index].element);
-    selectedFoods.splice(index, 1);
+  // Add/Remove food on chopping board
+  function addFoodToBoard(foodName, foodImgSrc) {
+    if (selectedFoods.find(f => f.name === foodName)) return;
+    const img = document.createElement("img");
+    img.src = foodImgSrc;
+    img.alt = foodName;
+    img.dataset.name = foodName;
+    img.onclick = () => removeFoodFromBoard(foodName);
+    choppingBoard?.appendChild(img);
+    selectedFoods.push({ name: foodName, element: img });
     resizeBoardItems();
   }
-}
 
-// Resize dynamically based on count
-function resizeBoardItems() {
-  const count = selectedFoods.length;
-  if (count === 0) return;
-
-  let size;
-  if (count <= 3) size = 90;
-  else if (count <= 6) size = 70;
-  else if (count <= 9) size = 55;
-  else size = 45;
-
-  selectedFoods.forEach(f => {
-    f.element.style.width = `${size}px`;
-    f.element.style.height = `${size}px`;
-  });
-}
-
-  // --- Cup selector
-  for (let i = 1; i <= 3; i++) {
-    const cup = document.createElement("img");
-    cup.src = "static/foods/cup.jpg";
-    cup.dataset.amount = i;
-    cup.addEventListener("click", () => {
-      document.querySelectorAll(".cup-container img").forEach(c => c.classList.remove("selected"));
-      cup.classList.add("selected");
-    });
-    cupContainer.appendChild(cup);
+  function removeFoodFromBoard(foodName) {
+    const index = selectedFoods.findIndex(f => f.name === foodName);
+    if (index !== -1) {
+      choppingBoard?.removeChild(selectedFoods[index].element);
+      selectedFoods.splice(index, 1);
+      resizeBoardItems();
+    }
   }
 
-  // --- Feed done action
-  feedDone.onclick = () => {
-    choppingBoard.innerHTML = "";
-    // fix selector: #cupContainer instead of .cup-container
+  function resizeBoardItems() {
+    const count = selectedFoods.length;
+    if (count === 0) return;
+    let size;
+    if (count <= 3) size = 90;
+    else if (count <= 6) size = 70;
+    else if (count <= 9) size = 55;
+    else size = 45;
+    selectedFoods.forEach(f => {
+      f.element.style.width = `${size}px`;
+      f.element.style.height = `${size}px`;
+    });
+  }
+
+  // --- Cups (create only once)
+  if (cupContainer && cupContainer.children.length === 0) {
+    for (let i = 1; i <= 3; i++) {
+      const cup = document.createElement("img");
+      cup.src = "static/foods/cup.jpg";
+      cup.classList.add('cup');
+      cup.dataset.amount = i;
+      cup.addEventListener("click", () => {
+        document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
+        cup.classList.add("selected");
+      });
+      cupContainer.appendChild(cup);
+    }
+  }
+
+  // --- Feed done action (single handler)
+  feedDone?.addEventListener('click', () => {
+    choppingBoard && (choppingBoard.innerHTML = "");
     document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
     clearChoppingBoard();
-    // return to home screen (show worm + hello) and play video
     showHome();
-  };
+  });
 
   function clearChoppingBoard() {
-  // Clear DOM elements
-  choppingBoard.innerHTML = "";
+    choppingBoard && (choppingBoard.innerHTML = "");
+    placedFoods.clear();
+    selectedFoods = [];
+    if (choppingBoard) {
+      choppingBoard.style.transition = "background-color 0.3s ease";
+      choppingBoard.style.backgroundColor = "#d7f7de";
+      setTimeout(() => { choppingBoard.style.backgroundColor = "var(--frame-color)"; }, 300);
+    }
+  }
 
-  // Reset the list of placed foods
-  // placedFoods was created as a Set — clear it instead of reassigning
-  placedFoods.clear();
-  // also reset the selectedFoods array used for sizing/removal
-  selectedFoods = [];
+  // --- Footer / Feed UI helpers (single declaration)
+  const footerMenu = document.getElementById('footerMenu');
+  const feedWindow = document.getElementById('feedWindow');
+  const feedPanelBody = document.getElementById('feedPanelBody');
+  const feedBtn = document.getElementById('feedBtn');
+  const learnBtn = document.getElementById('learnBtn');
+  const overviewBtn = document.getElementById('overviewBtn');
+  const closeFeedWindow = document.getElementById('closeFeedWindow');
 
-  // Optionally trigger visual feedback
-  choppingBoard.style.transition = "background-color 0.3s ease";
-  choppingBoard.style.backgroundColor = "#d7f7de";
-  setTimeout(() => {
-    choppingBoard.style.backgroundColor = "var(--frame-color)";
-  }, 300);
-}
+  // ensure overlay is hidden on load and doesn't block pointer events
+  if (feedWindow) {
+    feedWindow.style.display = 'none';
+    feedWindow.setAttribute('aria-hidden', 'true');
+    feedWindow.style.pointerEvents = 'none';
+  }
 
-// --- Footer / Feed UI helpers to keep feeding-area inside the main column
-const footerMenu = document.getElementById('footerMenu');
-const feedWindow = document.getElementById('feedWindow');
-const feedPanelBody = document.getElementById('feedPanelBody');
-const feedBtn = document.getElementById('feedBtn');
-const closeFeedWindow = document.getElementById('closeFeedWindow');
-
-// ensure overlay is hidden on load (prevents stray header "x" outside app)
-if (feedWindow) {
-  feedWindow.style.display = 'none';
-  feedWindow.setAttribute('aria-hidden', 'true');
-  // ensure hidden overlay doesn't block clicks
-  feedWindow.style.pointerEvents = 'none';
-}
-
-// make sure footer sits above everything and accepts clicks
-if (footerMenu) {
-  footerMenu.style.zIndex = '9999';
-  footerMenu.style.pointerEvents = 'auto';
-  // Delegated click handling so clicks on inner img/span still work reliably
-  footerMenu.addEventListener('click', (ev) => {
-    const btn = ev.target.closest('.menu-btn');
-    if (!btn) return;
-    // debug - remove if noisy
-    console.log('footer click:', btn.id);
-    if (btn.id === 'feedBtn') showScreen('feedingScreen');
-    else if (btn.id === 'learnBtn') showScreen('learnScreen');
-    else if (btn.id === 'overviewBtn') showScreen('overviewScreen');
-  });
-}
-
-// --- Cup selector: only create cups when none exist to avoid duplicates
-if (cupContainer && cupContainer.children.length === 0) {
-  for (let i = 1; i <= 3; i++) {
-    const cup = document.createElement("img");
-    cup.src = "static/foods/cup.jpg";
-    cup.classList.add('cup');
-    cup.dataset.amount = i;
-    cup.addEventListener("click", () => {
-      document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
-      cup.classList.add("selected");
+  if (footerMenu) {
+    footerMenu.style.zIndex = '9999';
+    footerMenu.style.pointerEvents = 'auto';
+    // delegated handling: images/spans won't block the button action
+    footerMenu.addEventListener('click', (ev) => {
+      const btn = ev.target.closest('.menu-btn');
+      if (!btn) return;
+      if (btn.id === 'feedBtn') showScreen('feedingScreen');
+      else if (btn.id === 'learnBtn') showScreen('learnScreen');
+      else if (btn.id === 'overviewBtn') showScreen('overviewScreen');
     });
-    cupContainer.appendChild(cup);
   }
-}
 
-// --- Feed done action
-feedDone.onclick = () => {
-  choppingBoard.innerHTML = "";
-  // fix selector: #cupContainer instead of .cup-container
-  document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
-  clearChoppingBoard();
-  // return to home screen (show worm + hello) and play video
-  showHome();
-};
-
-  function clearChoppingBoard() {
-  // Clear DOM elements
-  choppingBoard.innerHTML = "";
-
-  // Reset the list of placed foods
-  // placedFoods was created as a Set — clear it instead of reassigning
-  placedFoods.clear();
-  // also reset the selectedFoods array used for sizing/removal
-  selectedFoods = [];
-
-  // Optionally trigger visual feedback
-  choppingBoard.style.transition = "background-color 0.3s ease";
-  choppingBoard.style.backgroundColor = "#d7f7de";
-  setTimeout(() => {
-    choppingBoard.style.backgroundColor = "var(--frame-color)";
-  }, 300);
-}
-
-// --- Footer / Feed UI helpers to keep feeding-area inside the main column
-const footerMenu = document.getElementById('footerMenu');
-const feedWindow = document.getElementById('feedWindow');
-const feedPanelBody = document.getElementById('feedPanelBody');
-const feedBtn = document.getElementById('feedBtn');
-const closeFeedWindow = document.getElementById('closeFeedWindow');
-
-// ensure overlay is hidden on load (prevents stray header "x" outside app)
-if (feedWindow) {
-  feedWindow.style.display = 'none';
-  feedWindow.setAttribute('aria-hidden', 'true');
-  // ensure hidden overlay doesn't block clicks
-  feedWindow.style.pointerEvents = 'none';
-}
-
-// make sure footer sits above everything and accepts clicks
-if (footerMenu) {
-  footerMenu.style.zIndex = '9999';
-  footerMenu.style.pointerEvents = 'auto';
-  // Delegated click handling so clicks on inner img/span still work reliably
-  footerMenu.addEventListener('click', (ev) => {
-    const btn = ev.target.closest('.menu-btn');
-    if (!btn) return;
-    // debug - remove if noisy
-    console.log('footer click:', btn.id);
-    if (btn.id === 'feedBtn') showScreen('feedingScreen');
-    else if (btn.id === 'learnBtn') showScreen('learnScreen');
-    else if (btn.id === 'overviewBtn') showScreen('overviewScreen');
-  });
-}
-
-// Show one of the app screens (feeding / learn / overview).
-// Hides worm video + hello section while a screen is active.
-function showScreen(screenId) {
-  if (wormContainer) wormContainer.classList.add('hidden');
-  if (helloSection) helloSection.classList.add('hidden');
-
-  ensureFeedingAreaInApp();
-  if (feedingArea) {
+  // keep feeding-area inside app container
+  function ensureFeedingAreaInApp() {
+    const app = document.getElementById('app');
+    if (!feedingArea || !app) return;
+    if (!app.contains(feedingArea)) app.appendChild(feedingArea);
     feedingArea.classList.remove('hidden');
-    feedingArea.style.display = 'flex';
-    feedingArea.setAttribute('aria-hidden', 'false');
-    // ensure the feeding view starts at top and fits
-    feedingArea.scrollTop = 0;
+    feedingArea.style.display = ''; // let CSS decide
   }
 
-  [feedingScreen, learnScreen, overviewScreen].forEach(s => {
-    if (!s) return;
-    s.classList.add('hidden');
-    s.setAttribute('aria-hidden', 'true');
-    s.style.display = 'none';
-  });
-  const target = document.getElementById(screenId);
-  if (target) {
-    target.classList.remove('hidden');
-    target.setAttribute('aria-hidden', 'false');
-    target.style.display = ''; // let it layout normally
+  // Show one of the screens (keeps DOM stable)
+  function showScreen(screenId) {
+    wormContainer?.classList.add('hidden');
+    helloSection?.classList.add('hidden');
+    ensureFeedingAreaInApp();
+    if (feedingArea) {
+      feedingArea.classList.remove('hidden');
+      feedingArea.style.display = 'flex';
+      feedingArea.setAttribute('aria-hidden', 'false');
+      feedingArea.scrollTop = 0;
+    }
+    [feedingScreen, learnScreen, overviewScreen].forEach(s => {
+      if (!s) return;
+      s.classList.add('hidden');
+      s.setAttribute('aria-hidden', 'true');
+      s.style.display = 'none';
+    });
+    const target = document.getElementById(screenId);
+    if (target) {
+      target.classList.remove('hidden');
+      target.setAttribute('aria-hidden', 'false');
+      target.style.display = '';
+    }
+    wormVideo && !wormVideo.paused && wormVideo.pause();
   }
 
-  if (wormVideo && !wormVideo.paused) {
-    wormVideo.pause();
+  function showHome() {
+    wormContainer?.classList.remove('hidden');
+    helloSection?.classList.remove('hidden');
+    if (feedingArea) {
+      feedingArea.classList.add('hidden');
+      feedingArea.style.display = 'none';
+      feedingArea.setAttribute('aria-hidden', 'true');
+    }
+    [feedingScreen, learnScreen, overviewScreen].forEach(s => {
+      if (!s) return;
+      s.classList.add('hidden');
+      s.setAttribute('aria-hidden', 'true');
+      s.style.display = 'none';
+    });
+    if (wormVideo) {
+      try { wormVideo.play(); } catch (e) { /* ignore autoplay block */ }
+    }
   }
-}
 
-function showHome() {
-  if (wormContainer) wormContainer.classList.remove('hidden');
-  if (helloSection) helloSection.classList.remove('hidden');
-
-  if (feedingArea) {
-    feedingArea.classList.add('hidden');
-    feedingArea.style.display = 'none';
-    feedingArea.setAttribute('aria-hidden', 'true');
+  function closeFeedOverlay() {
+    if (!feedWindow) return;
+    feedWindow.style.display = 'none';
+    feedWindow.setAttribute('aria-hidden', 'true');
+    if (feedingArea) {
+      feedingArea.classList.add('hidden');
+      feedingArea.style.display = 'none';
+      feedingArea.setAttribute('aria-hidden', 'true');
+    }
+    footerMenu?.classList.add('visible');
   }
-  [feedingScreen, learnScreen, overviewScreen].forEach(s => {
-    if (!s) return;
-    s.classList.add('hidden');
-    s.setAttribute('aria-hidden', 'true');
-    s.style.display = 'none';
-  });
 
-  // resume worm video on home (autoplay may still be blocked by browser,
-  // but because <video autoplay muted> is set it should play)
-  if (wormVideo) {
-    try { wormVideo.play(); } catch (e) { /* ignore autoplay block */ }
-  }
-}
+  // wire individual buttons (safe redundant listeners are ok)
+  feedBtn?.addEventListener('click', () => showScreen('feedingScreen'));
+  learnBtn?.addEventListener('click', () => showScreen('learnScreen'));
+  overviewBtn?.addEventListener('click', () => showScreen('overviewScreen'));
+  closeFeedWindow?.addEventListener('click', closeFeedOverlay);
 
-// Close/hide the feed overlay (was referenced but missing)
-function closeFeedOverlay() {
-  if (!feedWindow) return;
-  feedWindow.style.display = 'none';
-  feedWindow.setAttribute('aria-hidden', 'true');
-  // keep feeding-area inside app and hidden when overlay is closed
-  if (feedingArea) {
-    feedingArea.classList.add('hidden');
-    feedingArea.style.display = 'none';
-    feedingArea.setAttribute('aria-hidden', 'true');
-  }
-  // ensure footer/menu remains visible
-  if (footerMenu) footerMenu.classList.add('visible');
-}
-
-// Attach actions for the footer buttons referenced in the HTML
-window.feedAction = function () { showScreen('feedingScreen'); };
-window.learnAction = function () { showScreen('learnScreen'); };
-window.overviewAction = function () { showScreen('overviewScreen'); };
-
-if (feedBtn) feedBtn.addEventListener('click', window.feedAction);
-const learnBtn = document.getElementById('learnBtn');
-const overviewBtn = document.getElementById('overviewBtn');
-if (learnBtn) learnBtn.addEventListener('click', window.learnAction);
-if (overviewBtn) overviewBtn.addEventListener('click', window.overviewAction);
-// now safe: closeFeedOverlay is defined above
-if (closeFeedWindow) closeFeedWindow.addEventListener('click', closeFeedOverlay);
-
-// start on home
-showHome();
+  // start on home
+  showHome();
 });
