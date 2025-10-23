@@ -44,6 +44,23 @@ body {
   display: none;
 }
 
+/* Hide native scrollbars but keep scroll functionality (mouse wheel / touch / drag) */
+.feeding-area {
+  flex: 1 1 auto;
+  width: 100%;
+  overflow-y: auto;         /* scroll inside column */
+  -webkit-overflow-scrolling: touch;
+  padding-right: 12px;      /* space for scrollbar (visually hidden) */
+  box-sizing: border-box;
+
+  /* hide scrollbars */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+.feeding-area::-webkit-scrollbar {
+  display: none;            /* Chrome, Safari, Opera */
+}
+
 /* DESKTOP: make the column use the full viewport height
    and make the lower part scrollable inside the column */
 @media (min-width: 900px) {
@@ -125,7 +142,7 @@ body {
   height: 84px;
   background: var(--bg-color);
   border: 0px solid var(--rim-color);
-  border-radius: 24px;
+  border-radius: clamp(12px, 3vw, 24px); /* responsive radius */
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -134,7 +151,7 @@ body {
   padding: 8px 12px;
   box-sizing: border-box;
   z-index: 60;
-  opacity: 1; /* visible by default */
+  opacity: 0.7; /* visible by default */
   pointer-events: auto;
   transition: opacity 220ms ease, transform 220ms ease;
 }
@@ -144,6 +161,7 @@ body {
   pointer-events: auto;
   transform: translateX(-50%) translateY(0);
 }
+
 .menu-btn {
   background: transparent;
   border: none;
@@ -157,7 +175,7 @@ body {
 .menu-btn img {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: clamp(8px, 3vw, 16px); /* responsive */
   border: 2px solid var(--rim-color);
   background: var(--frame-color);
   padding: 6px;
@@ -172,7 +190,7 @@ body {
   height: 110px;
   background: var(--btn-color);
   border: 1px solid var(--rim-color);
-  border-radius: 10%;
+  border-radius: clamp(10px, 3vw, 32px);
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -238,13 +256,13 @@ body {
 /* Chopping board container */
 .chopping-board {
   width: 100%;
-  max-width: 480px;            /* aligns nicely with 520px app-container */
-  height: 200px;               /* fixed height for desktop */
+  max-width: 480px;
+  height: 200px;
   background-color: var(--frame-color);
-  background-image: url("/static/board_texture.png"); /* optional nice texture */
+  background-image: url("/static/board_texture.png");
   background-size: cover;
   border: 1px solid var(--rim-color);
-  border-radius: 16px;
+  border-radius: clamp(8px, 2.5vw, 20px); /* responsive */
   box-shadow: inset 0 0 10px rgba(0,0,0,0.15);
   display: flex;
   flex-wrap: wrap;
@@ -288,11 +306,11 @@ body {
 
 /* Feeding-done section */
 .feeding-done {
-  width: 100%;                /* ensures it fits within the column */
+  width: 100%;
   max-width: 480px;
   box-sizing: border-box;
   border: 4px double var(--rim-color);
-  border-radius: 16px;
+  border-radius: clamp(10px, 2.5vw, 20px); /* responsive */
   background: repeating-linear-gradient(
     45deg,
     var(--frame-color),
@@ -303,7 +321,7 @@ body {
   padding: 1rem;
   text-align: center;
   margin-top: 1rem;
-  flex-shrink: 0;             /* prevents this from pushing layout height */
+  flex-shrink: 0;
   overflow: hidden;
 }
 
