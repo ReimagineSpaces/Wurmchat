@@ -266,6 +266,78 @@ document.addEventListener("DOMContentLoaded", () => {
   overviewBtn?.addEventListener('click', () => showScreen('overviewScreen'));
   closeFeedWindow?.addEventListener('click', closeFeedOverlay);
 
+  // store glider instance so we can refresh / recreate safely on resize
+  let foodGlider = null;
+
+  // initialize glider safely (idempotent)
+  function ensureGlider() {
+    if (!foodCarousel) return;
+    if (typeof Glider === 'undefined') return;
+
+    try {
+      // if the instance supports refresh, prefer that
+      if (foodGlider && typeof foodGlider.refresh === 'function') {
+        foodGlider.refresh(true);
+        return;
+      }
+      // if it supports destroy, call it to avoid duplicates
+      if (foodGlider && typeof foodGlider.destroy === 'function') {
+        try { foodGlider.destroy(); } catch (e) { /* ignore */ }
+      }
+    } catch (e) {
+      /* ignore and recreate below */
+    }
+
+    // create new instance
+    try {
+      foodGlider = new Glider(foodCarousel, {
+        slidesToShow: 3.5,
+        slidesToScroll: 1,
+        draggable: true,
+        dots: '#resp-dots',
+        arrows: { prev: '.glider-prev', next: '.glider-next' },
+        rewind: true
+      });
+    } catch (e) {
+      console.warn('Glider init failed:', e);
+      foodGlider = null;
+    }
+  }
+
+  // call once after populating carousel
+  ensureGlider();
+
+  // helper: if resize leads to no visible app children, restore home state
+  function ensureVisibleOnResize() {
+    const app = document.getElementById('app');
+    if (!app) return;
+    // consider visible if offsetParent exists (works for display:none)
+    const children = Array.from(app.children).filter(c => c.id !== 'footerMenu');
+    const anyVisible = children.some(el => el.offsetParent !== null);
+    if (!anyVisible) {
+      // fallback: show home so user isn't stuck on blank
+      showHome();
+    }
+  }
+
+  // on resize: recalc --vh, refresh glider, and verify UI visibility
+  window.addEventListener('resize', () => {
+    setVhVar();         // keep vh variable up to date
+    // small timeout to let layout settle before reinit
+    setTimeout(() => {
+      ensureGlider();
+      ensureVisibleOnResize();
+    }, 80);
+  });
+
+  // also re-run once when tab becomes visible again (helps when switching windows)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      ensureGlider();
+      setVhVar();
+    }
+  });
+
   // start on home
   showHome();
 });
