@@ -1,10 +1,10 @@
 :root {
-  --bg-color: #a9f7d2;
-  --frame-color: #ffeecb;
-  --rim-color: #d7a96b;
-  --accent-color: #4eb89d;
-  --btn-color: #ffe680;
-  --btn-hover: #ffcc00;
+  --bg-color: #734002;
+  --frame-color: #f2e966;
+  --rim-color: #000000;
+  --accent-color: #f28749;
+  --btn-color: #07b2d9;
+  --btn-hover: #bf7f30;
 }
 
 /* ensure html/body can grow and use the CSS var */
@@ -39,6 +39,11 @@ body {
   overflow-y: hidden;  /* no vertical scrollbars unless explicitly needed */
 }
 
+/* Initially hide feeding area until user interacts */
+.feeding-area {
+  display: none;
+}
+
 /* DESKTOP: make the column use the full viewport height
    and make the lower part scrollable inside the column */
 @media (min-width: 900px) {
@@ -59,7 +64,7 @@ body {
   flex: 0 0 auto;
   aspect-ratio: 1 / 1;
   background-color: var(--frame-color);
-  border: 10px solid var(--rim-color);
+  border: 1px solid var(--rim-color);
   border-radius: 30px;
   overflow: hidden;
   position: relative;
@@ -102,6 +107,57 @@ body {
   justify-content: center;
   align-items: center;
   gap: 15px;
+}
+
+/* Footer menu styled like a compact Spotify-like control bar */
+.footer-menu {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 16px;
+  width: min(520px, 95%);
+  max-width: 520px;
+  height: 84px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+  border: 2px solid var(--rim-color);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  padding: 8px 12px;
+  box-sizing: border-box;
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+.footer-menu.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.menu-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #4b3a1f;
+}
+.menu-btn img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 2px solid var(--rim-color);
+  background: var(--frame-color);
+  padding: 6px;
+}
+.menu-btn span {
+  font-size: 0.85rem;
 }
 
 .hand-button {
@@ -178,7 +234,7 @@ body {
   background-color: var(--frame-color);
   background-image: url("/static/board_texture.png"); /* optional nice texture */
   background-size: cover;
-  border: 6px solid var(--rim-color);
+  border: 1px solid var(--rim-color);
   border-radius: 16px;
   box-shadow: inset 0 0 10px rgba(0,0,0,0.15);
   display: flex;
