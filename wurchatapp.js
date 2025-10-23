@@ -307,36 +307,59 @@ document.addEventListener("DOMContentLoaded", () => {
   // call once after populating carousel
   ensureGlider();
 
-  // helper: if resize leads to no visible app children, restore home state
+  // small debounce helper
+  function debounce(fn, wait = 120) {
+    let t = null;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), wait);
+    };
+  }
+
+  // safe reflow handler: recalc vh, reinit glider, and ensure UI visible
+  const safeReflow = debounce(() => {
+    try {
+      setVhVar();
+    } catch (e) { /* ignore */ }
+    try {
+      ensureGlider && ensureGlider();
+    } catch (e) { console.warn('ensureGlider failed', e); }
+    try {
+      ensureVisibleOnResize && ensureVisibleOnResize();
+    } catch (e) { /* ignore */ }
+  }, 120);
+
+  // use ResizeObserver to catch CSS/layout-driven size changes that window.resize misses
+  try {
+    const appEl = document.getElementById('app');
+    if (window.ResizeObserver && appEl) {
+      const ro = new ResizeObserver(safeReflow);
+      ro.observe(appEl);
+      // also observe body for zoom/viewport changes
+      ro.observe(document.body);
+    } else {
+      // fallback to window resize
+      window.addEventListener('resize', safeReflow);
+    }
+  } catch (e) {
+    window.addEventListener('resize', safeReflow);
+  }
+
+  // ensureVisibleOnResize: defensive — if nothing visible, restore home
   function ensureVisibleOnResize() {
     const app = document.getElementById('app');
     if (!app) return;
-    // consider visible if offsetParent exists (works for display:none)
-    const children = Array.from(app.children).filter(c => c.id !== 'footerMenu');
-    const anyVisible = children.some(el => el.offsetParent !== null);
+    const children = Array.from(app.children).filter(c => c.id !== 'footerMenu' && c.id !== 'feedWindow');
+    const anyVisible = children.some(el => el.offsetParent !== null && getComputedStyle(el).display !== 'none');
     if (!anyVisible) {
-      // fallback: show home so user isn't stuck on blank
+      // showHome is idempotent and safe
       showHome();
+      // also reset feeding-area scroll position
+      if (feedingArea) feedingArea.scrollTop = 0;
+      // re-init the glider after restoring
+      ensureGlider && ensureGlider();
     }
   }
-
-  // on resize: recalc --vh, refresh glider, and verify UI visibility
-  window.addEventListener('resize', () => {
-    setVhVar();         // keep vh variable up to date
-    // small timeout to let layout settle before reinit
-    setTimeout(() => {
-      ensureGlider();
-      ensureVisibleOnResize();
-    }, 80);
-  });
-
-  // also re-run once when tab becomes visible again (helps when switching windows)
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-      ensureGlider();
-      setVhVar();
-    }
-  });
 
   // start on home
   showHome();

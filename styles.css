@@ -285,18 +285,25 @@ body {
 .cups-container {
   width: 100%;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: space-between;
+  align-items: center;   /* keep cups vertically centered */
   gap: 10px;
+  padding: 0.25rem;
+  box-sizing: border-box;
+  flex: 0 0 auto;
 }
 
 .cup {
-  flex: 1;
-  max-width: 30%;
-  cursor: pointer;
-  border-radius: 12px;
-  border: 4px solid transparent;
-  transition: all 0.2s;
+  width: clamp(64px, 22%, 96px);
+  height: auto;
+  max-height: clamp(64px, 18vh, 120px); /* prevents huge cups on small viewports */
+  object-fit: contain;
+  align-self: center;
+  border-radius: clamp(8px, 2.5vw, 16px);
+  border: 2px solid var(--rim-color);
+  background: var(--frame-color);
+  padding: 6px;
+  box-sizing: border-box;
 }
 
 .cup.selected {
@@ -397,13 +404,23 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 }
 .food-item {
   width: clamp(72px, 18%, 120px);
-  height: auto;
   display: inline-block;
-  border-radius: clamp(8px, 2.5vw, 16px);
+  vertical-align: middle;
 }
 
 /* feed overlay shouldn't block footer pointer events when hidden */
 #feedWindow[aria-hidden="true"] {
   pointer-events: none;
   display: none !important;
+}
+
+/* Make feeding screens stable and compact */
+.feeding-area .screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0; /* allow internal scrolling to work */
 }
