@@ -14,10 +14,11 @@
     <!-- Worm video container -->
     <div class="worm-container">
       <video id="wormVideo" muted loop playsinline autoplay>
-        <source id="wormVideoSource" src="static/videos/idle.mp4" type="video/mp4" />
+        <!-- JS expects this id to exist so we can change src / load -->
+        <source id="wormVideoSource" src="static/videos/worm_happy.mp4" type="video/mp4" />
       </video>
       <div id="thoughtBubble" class="thought-bubble">
-        <img id="thoughtImage" src="static/thoughts/Melone.png" alt="Worm thought" />
+        <img id="thoughtImage" src="static/thoughts/Melone.png" alt="Wurm Gedanke" />
       </div>
     </div>
 
@@ -91,15 +92,14 @@
   </nav>
 
   <!-- Feed window (overlay) - hidden by default so stray header won't show -->
-  <div id="feedWindow" class="feed-window" aria-hidden="true" style="display:none;">
+  <div id="feedWindow" class="feed-window" aria-hidden="true" style="display:none; pointer-events:none;">
     <div class="feed-panel">
       <header class="feed-panel-header">
         <button id="closeFeedWindow" class="close-feed" aria-label="Schließen">✕</button>
         <h3>Füttern</h3>
       </header>
-      <div id="feedPanelBody" class="feed-panel-body">
-        <!-- feeding-area will be appended here dynamically by JS -->
-      </div>
+      <!-- JS expects this id when moving/appending content -->
+      <div id="feedPanelBody" class="feed-panel-body"></div>
     </div>
   </div>
 

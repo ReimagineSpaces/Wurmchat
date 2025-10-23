@@ -333,6 +333,77 @@ body {
 
 .hidden {
   display: none !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+/* hide native scrollbars globally but keep scrolling behavior */
+html, body {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+
+/* ensure app flex item can shrink when children overflow (prevents page scrollbar) */
+.app-container {
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden; /* keep page itself unclipped; feeding-area will scroll internally */
+}
+
+/* feeding-area must be a scrollable flex child that doesn't create page scrollbars */
+.feeding-area {
+  display: none;           /* hidden by default; JS toggles to show */
+  flex: 1 1 auto;
+  min-height: 0;          /* CRITICAL: allow internal scrolling inside flexbox */
+  min-width: 0;
+  width: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  box-sizing: border-box;
+  padding-bottom: 3.5rem;  /* space for footer */
+}
+.feeding-area::-webkit-scrollbar { display: none; }
+
+/* footer exactly matches app width and centered above it */
+.footer-menu {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  max-width: 520px;
+  position: fixed;
+  bottom: 16px;
+  box-sizing: border-box;
+  z-index: 9999;
+  pointer-events: auto;
+  border-radius: clamp(10px, 3vw, 24px);
+}
+
+/* responsive radii for btns, cards */
+.menu-btn img,
+.hand-button,
+.chopping-board,
+.cup {
+  border-radius: clamp(8px, 2.5vw, 20px);
+}
+
+/* ensure carousel/glider items fit on common tablet/desktop without gaps */
+.carousel-container, .glider {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+}
+.food-item {
+  width: clamp(72px, 18%, 120px);
+  height: auto;
+  display: inline-block;
+  border-radius: clamp(8px, 2.5vw, 16px);
+}
+
+/* feed overlay shouldn't block footer pointer events when hidden */
+#feedWindow[aria-hidden="true"] {
   pointer-events: none;
-  user-select: none;
+  display: none !important;
 }
