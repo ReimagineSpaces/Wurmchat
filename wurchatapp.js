@@ -197,19 +197,24 @@ const closeFeedWindow = document.getElementById('closeFeedWindow');
 if (feedWindow) {
   feedWindow.style.display = 'none';
   feedWindow.setAttribute('aria-hidden', 'true');
+  // ensure hidden overlay doesn't block clicks
+  feedWindow.style.pointerEvents = 'none';
 }
 
-function ensureFeedingAreaInApp() {
-  const app = document.getElementById('app');
-  const feedingArea = document.querySelector('.feeding-area');
-  if (!feedingArea) return;
-  // If feeding-area has been moved out, append it safely as last child of app
-  if (!app.contains(feedingArea)) {
-    app.appendChild(feedingArea);
-  }
-  // Make sure the feeding area is visible as a flex-item in the column
-  feedingArea.classList.remove('hidden');
-  feedingArea.style.display = ''; // let CSS control display
+// make sure footer sits above everything and accepts clicks
+if (footerMenu) {
+  footerMenu.style.zIndex = '9999';
+  footerMenu.style.pointerEvents = 'auto';
+  // Delegated click handling so clicks on inner img/span still work reliably
+  footerMenu.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('.menu-btn');
+    if (!btn) return;
+    // debug - remove if noisy
+    console.log('footer click:', btn.id);
+    if (btn.id === 'feedBtn') showScreen('feedingScreen');
+    else if (btn.id === 'learnBtn') showScreen('learnScreen');
+    else if (btn.id === 'overviewBtn') showScreen('overviewScreen');
+  });
 }
 
 // --- Cup selector: only create cups when none exist to avoid duplicates
@@ -266,19 +271,24 @@ const closeFeedWindow = document.getElementById('closeFeedWindow');
 if (feedWindow) {
   feedWindow.style.display = 'none';
   feedWindow.setAttribute('aria-hidden', 'true');
+  // ensure hidden overlay doesn't block clicks
+  feedWindow.style.pointerEvents = 'none';
 }
 
-function ensureFeedingAreaInApp() {
-  const app = document.getElementById('app');
-  const feedingArea = document.querySelector('.feeding-area');
-  if (!feedingArea) return;
-  // If feeding-area has been moved out, append it safely as last child of app
-  if (!app.contains(feedingArea)) {
-    app.appendChild(feedingArea);
-  }
-  // Make sure the feeding area is visible as a flex-item in the column
-  feedingArea.classList.remove('hidden');
-  feedingArea.style.display = ''; // let CSS control display
+// make sure footer sits above everything and accepts clicks
+if (footerMenu) {
+  footerMenu.style.zIndex = '9999';
+  footerMenu.style.pointerEvents = 'auto';
+  // Delegated click handling so clicks on inner img/span still work reliably
+  footerMenu.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('.menu-btn');
+    if (!btn) return;
+    // debug - remove if noisy
+    console.log('footer click:', btn.id);
+    if (btn.id === 'feedBtn') showScreen('feedingScreen');
+    else if (btn.id === 'learnBtn') showScreen('learnScreen');
+    else if (btn.id === 'overviewBtn') showScreen('overviewScreen');
+  });
 }
 
 // Show one of the app screens (feeding / learn / overview).
