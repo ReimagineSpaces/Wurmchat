@@ -337,6 +337,21 @@ function showHome() {
   }
 }
 
+// Close/hide the feed overlay (was referenced but missing)
+function closeFeedOverlay() {
+  if (!feedWindow) return;
+  feedWindow.style.display = 'none';
+  feedWindow.setAttribute('aria-hidden', 'true');
+  // keep feeding-area inside app and hidden when overlay is closed
+  if (feedingArea) {
+    feedingArea.classList.add('hidden');
+    feedingArea.style.display = 'none';
+    feedingArea.setAttribute('aria-hidden', 'true');
+  }
+  // ensure footer/menu remains visible
+  if (footerMenu) footerMenu.classList.add('visible');
+}
+
 // Attach actions for the footer buttons referenced in the HTML
 window.feedAction = function () { showScreen('feedingScreen'); };
 window.learnAction = function () { showScreen('learnScreen'); };
@@ -347,6 +362,7 @@ const learnBtn = document.getElementById('learnBtn');
 const overviewBtn = document.getElementById('overviewBtn');
 if (learnBtn) learnBtn.addEventListener('click', window.learnAction);
 if (overviewBtn) overviewBtn.addEventListener('click', window.overviewAction);
+// now safe: closeFeedOverlay is defined above
 if (closeFeedWindow) closeFeedWindow.addEventListener('click', closeFeedOverlay);
 
 // start on home
