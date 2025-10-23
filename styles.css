@@ -318,13 +318,7 @@ body {
   box-sizing: border-box;
   border: 4px double var(--rim-color);
   border-radius: clamp(10px, 2.5vw, 20px); /* responsive */
-  background: repeating-linear-gradient(
-    45deg,
-    var(--frame-color),
-    var(--frame-color) 10px,
-    var(--bg-color) 10px,
-    var(--bg-color) 20px
-  );
+  background: var(--frame-color);
   padding: 1rem;
   text-align: center;
   margin-top: 1rem;
