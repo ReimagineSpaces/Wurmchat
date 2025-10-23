@@ -13,7 +13,7 @@
   
     <!-- Worm video container -->
     <div class="worm-container">
-      <video id="wormVideo" muted loop playsinline>
+      <video id="wormVideo" muted loop playsinline autoplay>
         <source id="wormVideoSource" src="static/videos/idle.mp4" type="video/mp4" />
       </video>
       <div id="thoughtBubble" class="thought-bubble">
@@ -38,19 +38,15 @@
           <div id="foodCarousel" class="glider">
             <button aria-label="Previous" class="glider-prev">«</button>
             <button aria-label="Next" class="glider-next">»</button>
-            <div role="tablist" class="dots"></div>
+            <div role="tablist" class="dots" id="resp-dots"></div>
           </div>
         </div>
 
         <!--  Chopping board -->
         <div id="choppingBoard" class="chopping-board"></div>
 
-        <!-- Cups selection -->
-        <div id="cupContainer" class="cups-container">
-          <img class="cup" src="static/foods/cup.jpg" alt="1 cup" />
-          <img class="cup" src="static/foods/cup.jpg" alt="2 cups" />
-          <img class="cup" src="static/foods/cup.jpg" alt="3 cups" />
-        </div>
+        <!-- Cups selection (empty: JS will render 3 consistent cups) -->
+        <div id="cupContainer" class="cups-container"></div>
 
         <!-- Feeding done -->
         <div id="feedDone" class="feeding-done">
@@ -94,8 +90,8 @@
     </button>
   </nav>
 
-  <!-- Feed window (overlay) - feeding-area will be moved here when user opens Feed -->
-  <div id="feedWindow" class="feed-window" aria-hidden="true">
+  <!-- Feed window (overlay) - hidden by default so stray header won't show -->
+  <div id="feedWindow" class="feed-window" aria-hidden="true" style="display:none;">
     <div class="feed-panel">
       <header class="feed-panel-header">
         <button id="closeFeedWindow" class="close-feed" aria-label="Schließen">✕</button>

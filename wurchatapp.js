@@ -161,9 +161,10 @@ function resizeBoardItems() {
   // --- Feed done action
   feedDone.onclick = () => {
     choppingBoard.innerHTML = "";
-    document.querySelectorAll(".cup-container img").forEach(c => c.classList.remove("selected"));
+    // fix selector: #cupContainer instead of .cup-container
+    document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
     clearChoppingBoard();
-    // return to home screen (show worm + hello)
+    // return to home screen (show worm + hello) and play video
     showHome();
   };
 
@@ -192,59 +193,131 @@ const feedPanelBody = document.getElementById('feedPanelBody');
 const feedBtn = document.getElementById('feedBtn');
 const closeFeedWindow = document.getElementById('closeFeedWindow');
 
+// ensure overlay is hidden on load (prevents stray header "x" outside app)
+if (feedWindow) {
+  feedWindow.style.display = 'none';
+  feedWindow.setAttribute('aria-hidden', 'true');
+}
+
 function ensureFeedingAreaInApp() {
   const app = document.getElementById('app');
   const feedingArea = document.querySelector('.feeding-area');
-  // If feeding-area has been moved into the overlay, move it back into the app
+  if (!feedingArea) return;
+  // If feeding-area has been moved out, append it safely as last child of app
   if (!app.contains(feedingArea)) {
-    // place it before the footer so it remains in the single column
-    app.insertBefore(feedingArea, footerMenu);
+    app.appendChild(feedingArea);
   }
   // Make sure the feeding area is visible as a flex-item in the column
-  feedingArea.style.display = ''; // let CSS control display (not forced none)
+  feedingArea.classList.remove('hidden');
+  feedingArea.style.display = ''; // let CSS control display
+}
+
+// --- Cup selector: only create cups when none exist to avoid duplicates
+if (cupContainer && cupContainer.children.length === 0) {
+  for (let i = 1; i <= 3; i++) {
+    const cup = document.createElement("img");
+    cup.src = "static/foods/cup.jpg";
+    cup.classList.add('cup');
+    cup.dataset.amount = i;
+    cup.addEventListener("click", () => {
+      document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
+      cup.classList.add("selected");
+    });
+    cupContainer.appendChild(cup);
+  }
+}
+
+// --- Feed done action
+feedDone.onclick = () => {
+  choppingBoard.innerHTML = "";
+  // fix selector: #cupContainer instead of .cup-container
+  document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
+  clearChoppingBoard();
+  // return to home screen (show worm + hello) and play video
+  showHome();
+};
+
+  function clearChoppingBoard() {
+  // Clear DOM elements
+  choppingBoard.innerHTML = "";
+
+  // Reset the list of placed foods
+  // placedFoods was created as a Set — clear it instead of reassigning
+  placedFoods.clear();
+  // also reset the selectedFoods array used for sizing/removal
+  selectedFoods = [];
+
+  // Optionally trigger visual feedback
+  choppingBoard.style.transition = "background-color 0.3s ease";
+  choppingBoard.style.backgroundColor = "#d7f7de";
+  setTimeout(() => {
+    choppingBoard.style.backgroundColor = "var(--frame-color)";
+  }, 300);
+}
+
+// --- Footer / Feed UI helpers to keep feeding-area inside the main column
+const footerMenu = document.getElementById('footerMenu');
+const feedWindow = document.getElementById('feedWindow');
+const feedPanelBody = document.getElementById('feedPanelBody');
+const feedBtn = document.getElementById('feedBtn');
+const closeFeedWindow = document.getElementById('closeFeedWindow');
+
+// ensure overlay is hidden on load (prevents stray header "x" outside app)
+if (feedWindow) {
+  feedWindow.style.display = 'none';
+  feedWindow.setAttribute('aria-hidden', 'true');
+}
+
+function ensureFeedingAreaInApp() {
+  const app = document.getElementById('app');
+  const feedingArea = document.querySelector('.feeding-area');
+  if (!feedingArea) return;
+  // If feeding-area has been moved out, append it safely as last child of app
+  if (!app.contains(feedingArea)) {
+    app.appendChild(feedingArea);
+  }
+  // Make sure the feeding area is visible as a flex-item in the column
+  feedingArea.classList.remove('hidden');
+  feedingArea.style.display = ''; // let CSS control display
 }
 
 // Show one of the app screens (feeding / learn / overview).
 // Hides worm video + hello section while a screen is active.
 function showScreen(screenId) {
-  // keep elements in DOM — toggle visibility only
   if (wormContainer) wormContainer.classList.add('hidden');
   if (helloSection) helloSection.classList.add('hidden');
 
-  // ensure feeding-area is inside #app and visible
   ensureFeedingAreaInApp();
   if (feedingArea) {
     feedingArea.classList.remove('hidden');
     feedingArea.style.display = 'flex';
     feedingArea.setAttribute('aria-hidden', 'false');
+    // ensure the feeding view starts at top and fits
+    feedingArea.scrollTop = 0;
   }
 
-  // hide all screens and then show target
   [feedingScreen, learnScreen, overviewScreen].forEach(s => {
     if (!s) return;
     s.classList.add('hidden');
     s.setAttribute('aria-hidden', 'true');
+    s.style.display = 'none';
   });
   const target = document.getElementById(screenId);
   if (target) {
     target.classList.remove('hidden');
     target.setAttribute('aria-hidden', 'false');
-    // make sure target uses natural layout
-    target.style.display = '';
+    target.style.display = ''; // let it layout normally
   }
 
-  // pause worm video while in a screen view
   if (wormVideo && !wormVideo.paused) {
     wormVideo.pause();
   }
 }
 
 function showHome() {
-  // restore worm + hello visibility
   if (wormContainer) wormContainer.classList.remove('hidden');
   if (helloSection) helloSection.classList.remove('hidden');
 
-  // hide feeding-area and its screens
   if (feedingArea) {
     feedingArea.classList.add('hidden');
     feedingArea.style.display = 'none';
@@ -257,9 +330,10 @@ function showHome() {
     s.style.display = 'none';
   });
 
-  // resume worm video on home (if available)
-  if (wormVideo && wormVideo.paused) {
-    try { wormVideo.play(); } catch (e) { /* autoplay may be blocked; ignore */ }
+  // resume worm video on home (autoplay may still be blocked by browser,
+  // but because <video autoplay muted> is set it should play)
+  if (wormVideo) {
+    try { wormVideo.play(); } catch (e) { /* ignore autoplay block */ }
   }
 }
 
