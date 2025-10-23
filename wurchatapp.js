@@ -164,7 +164,10 @@ function resizeBoardItems() {
   choppingBoard.innerHTML = "";
 
   // Reset the list of placed foods
-  placedFoods = [];
+  // placedFoods was created as a Set — clear it instead of reassigning
+  placedFoods.clear();
+  // also reset the selectedFoods array used for sizing/removal
+  selectedFoods = [];
 
   // Optionally trigger visual feedback
   choppingBoard.style.transition = "background-color 0.3s ease";
@@ -173,4 +176,59 @@ function resizeBoardItems() {
     choppingBoard.style.backgroundColor = "var(--frame-color)";
   }, 300);
 }
+
+// --- Footer / Feed UI helpers to keep feeding-area inside the main column
+const footerMenu = document.getElementById('footerMenu');
+const feedWindow = document.getElementById('feedWindow');
+const feedPanelBody = document.getElementById('feedPanelBody');
+const feedBtn = document.getElementById('feedBtn');
+const closeFeedWindow = document.getElementById('closeFeedWindow');
+
+function ensureFeedingAreaInApp() {
+  const app = document.getElementById('app');
+  const feedingArea = document.querySelector('.feeding-area');
+  // If feeding-area has been moved into the overlay, move it back into the app
+  if (!app.contains(feedingArea)) {
+    // place it before the footer so it remains in the single column
+    app.insertBefore(feedingArea, footerMenu);
+  }
+  // Make sure the feeding area is visible as a flex-item in the column
+  feedingArea.style.display = ''; // let CSS control display (not forced none)
+}
+
+function openFeedOverlay() {
+  // Keep layout stable by NOT moving the feeding-area into the overlay.
+  // Instead ensure it's visible within the main column.
+  ensureFeedingAreaInApp();
+  // Hide the overlay if accidentally shown
+  if (feedWindow) {
+    feedWindow.style.display = 'none';
+    feedWindow.setAttribute('aria-hidden', 'true');
+  }
+  // Reveal footer if needed
+  if (footerMenu) footerMenu.classList.add('visible');
+}
+
+function closeFeedOverlay() {
+  // For now simply hide the overlay and keep feeding-area inside the main app
+  if (feedWindow) {
+    feedWindow.style.display = 'none';
+    feedWindow.setAttribute('aria-hidden', 'true');
+  }
+}
+
+// Attach actions for the footer buttons referenced in the HTML
+window.feedAction = function () {
+  openFeedOverlay();
+};
+window.learnAction = function () {
+  // placeholder: keep layout stable, show footer
+  ensureFeedingAreaInApp();
+};
+window.overviewAction = function () {
+  ensureFeedingAreaInApp();
+};
+
+if (feedBtn) feedBtn.addEventListener('click', window.feedAction);
+if (closeFeedWindow) closeFeedWindow.addEventListener('click', closeFeedOverlay);
 });
