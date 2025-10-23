@@ -117,8 +117,11 @@ body {
   left: 50%;
   transform: translateX(-50%);
   bottom: 16px;
-  width: min(520px, 95%);
+
+  /* match .app-container sizing exactly: 95% up to 520px */
+  width: 95%;
   max-width: 520px;
+
   height: 84px;
   background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
   border: 2px solid var(--rim-color);
@@ -131,10 +134,11 @@ body {
   padding: 8px 12px;
   box-sizing: border-box;
   z-index: 60;
-  opacity: 0;
-  pointer-events: none;
+  opacity: 1; /* visible by default */
+  pointer-events: auto;
   transition: opacity 220ms ease, transform 220ms ease;
 }
+/* keep existing .footer-menu.visible behavior, if used elsewhere */
 .footer-menu.visible {
   opacity: 1;
   pointer-events: auto;
@@ -167,8 +171,8 @@ body {
   max-width: 520px;
   height: 110px;
   background: var(--btn-color);
-  border: 4px solid var(--rim-color);
-  border-radius: 16px;
+  border: 1px solid var(--rim-color);
+  border-radius: 30%;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;

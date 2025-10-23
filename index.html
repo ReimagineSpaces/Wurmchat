@@ -59,22 +59,24 @@
       </div>
     </div>
     
-    <!-- Footer menu (hidden until user interacts) -->
-    <nav id="footerMenu" class="footer-menu" aria-hidden="true">
-      <button class="menu-btn" id="feedBtn" onclick="feedAction()" aria-label="Füttern">
-        <img src="static/icons/cup_full.png" alt="Füttern" />
-        <span>Füttern</span>
-      </button>
-      <button class="menu-btn" id="learnBtn" onclick="learnAction()" aria-label="Lernen">
-        <img src="static/icons/hello.png" alt="Lernen" />
-        <span>Lernen</span>
-      </button>
-      <button class="menu-btn" id="overviewBtn" onclick="overviewAction()" aria-label="Übersicht">
-        <img src="static/icons/give_cup.png" alt="Übersicht" />
-        <span>Übersicht</span>
-      </button>
-    </nav>
-  </div>
+  </div> <!-- end of #app .app-container -->
+
+  <!-- Footer menu (moved outside #app so it won't be clipped). 
+       Visible by default and matches app width responsively. -->
+  <nav id="footerMenu" class="footer-menu visible" aria-hidden="false">
+    <button class="menu-btn" id="feedBtn" aria-label="Füttern">
+      <img src="static/icons/cup_full.png" alt="Füttern" />
+      <span>Füttern</span>
+    </button>
+    <button class="menu-btn" id="learnBtn" aria-label="Lernen">
+      <img src="static/icons/hello.png" alt="Lernen" />
+      <span>Lernen</span>
+    </button>
+    <button class="menu-btn" id="overviewBtn" aria-label="Übersicht">
+      <img src="static/icons/give_cup.png" alt="Übersicht" />
+      <span>Übersicht</span>
+    </button>
+  </nav>
 
   <!-- Feed window (overlay) - feeding-area will be moved here when user opens Feed -->
   <div id="feedWindow" class="feed-window" aria-hidden="true">
