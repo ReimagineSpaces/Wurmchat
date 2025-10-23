@@ -31,32 +31,48 @@
 
     <!-- Feeding area -->
     <!-- this element will scroll on desktop -->
-    <div class="feeding-area">
-      <div class="carousel-container">
-        <div id="foodCarousel" class="glider">
-          <button aria-label="Previous" class="glider-prev">«</button>
-          <button aria-label="Next" class="glider-next">»</button>
-          <div role="tablist" class="dots"></div>
-  
+    <div class="feeding-area" aria-hidden="true">
+      <!-- Screen: Feeding (default content moved here) -->
+      <section id="feedingScreen" class="screen" aria-hidden="true">
+        <div class="carousel-container">
+          <div id="foodCarousel" class="glider">
+            <button aria-label="Previous" class="glider-prev">«</button>
+            <button aria-label="Next" class="glider-next">»</button>
+            <div role="tablist" class="dots"></div>
+          </div>
         </div>
-      </div>
 
-      <!--  Chopping board -->
-      <div id="choppingBoard" class="chopping-board"></div>
+        <!--  Chopping board -->
+        <div id="choppingBoard" class="chopping-board"></div>
 
-      <!--Cups selection -->
-      <div id="cupContainer" class="cups-container">
-        <img class="cup" src="static/foods/cup.jpg" alt="1 cup" />
-        <img class="cup" src="static/foods/cup.jpg" alt="2 cups" />
-        <img class="cup" src="static/foods/cup.jpg" alt="3 cups" />
-      </div>
+        <!-- Cups selection -->
+        <div id="cupContainer" class="cups-container">
+          <img class="cup" src="static/foods/cup.jpg" alt="1 cup" />
+          <img class="cup" src="static/foods/cup.jpg" alt="2 cups" />
+          <img class="cup" src="static/foods/cup.jpg" alt="3 cups" />
+        </div>
 
+        <!-- Feeding done -->
+        <div id="feedDone" class="feeding-done">
+          <img src="static/icons/give_cup.png" alt="fertig mit füttern" class="clickable"/>
+        </div>
+      </section>
 
+      <!-- Screen: Learning -->
+      <section id="learnScreen" class="screen" aria-hidden="true" style="display:none;">
+        <div class="learn-content">
+          <h2>Lernen</h2>
+          <p>Hier erscheinen Lerninhalte für den Wurm.</p>
+        </div>
+      </section>
 
-      <!-- Feeding done -->
-      <div id="feedDone" class="feeding-done">
-        <img src="static/icons/give_cup.png" alt="fertig mit füttern" class="clickable"/>
-      </div>
+      <!-- Screen: Overview -->
+      <section id="overviewScreen" class="screen" aria-hidden="true" style="display:none;">
+        <div class="overview-content">
+          <h2>Übersicht</h2>
+          <p>Statistiken und Status des Wurms.</p>
+        </div>
+      </section>
     </div>
     
   </div> <!-- end of #app .app-container -->

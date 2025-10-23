@@ -8,6 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const foodCarousel = document.getElementById("foodCarousel");
   const choppingBoard = document.getElementById("choppingBoard");
   const cupContainer = document.getElementById("cupContainer");
+  const wormContainer = document.querySelector('.worm-container');
+  const helloSection = document.querySelector('.hello-section');
+  const feedingArea = document.querySelector('.feeding-area');
+  const feedingScreen = document.getElementById('feedingScreen');
+  const learnScreen = document.getElementById('learnScreen');
+  const overviewScreen = document.getElementById('overviewScreen');
   
 
   // ---  Mock food data
@@ -31,9 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Mock API states
   const wormStates = {
-    happy: { video: "static/worm_happy.mp4", thought: "static/icons/cup_full.png" },
-    tooDry: { video: "static/worm_cold.mp4", thought: "static/icons/cup_full.png" },
-    hungry: { video: "static/worm_hungry.mp4", thought: "static/icons/Melone.png" }
+    happy: { video: "static/videos/worm_happy.mp4", thought: "static/icons/cup_full.png" },
+    tooDry: { video: "static/videos/worm_cold.mp4", thought: "static/icons/cup_full.png" },
+    hungry: { video: "static/videos/worm_hungry.mp4", thought: "static/icons/Melone.png" }
   };
 
   async function fetchWormState() {
@@ -157,6 +163,8 @@ function resizeBoardItems() {
     choppingBoard.innerHTML = "";
     document.querySelectorAll(".cup-container img").forEach(c => c.classList.remove("selected"));
     clearChoppingBoard();
+    // return to home screen (show worm + hello)
+    showHome();
   };
 
   function clearChoppingBoard() {
@@ -196,39 +204,63 @@ function ensureFeedingAreaInApp() {
   feedingArea.style.display = ''; // let CSS control display (not forced none)
 }
 
-function openFeedOverlay() {
-  // Keep layout stable by NOT moving the feeding-area into the overlay.
-  // Instead ensure it's visible within the main column.
-  ensureFeedingAreaInApp();
-  // Hide the overlay if accidentally shown
-  if (feedWindow) {
-    feedWindow.style.display = 'none';
-    feedWindow.setAttribute('aria-hidden', 'true');
+// Show one of the app screens (feeding / learn / overview).
+// Hides worm video + hello section while a screen is active.
+function showScreen(screenId) {
+  // hide worm + hello
+  if (wormContainer) wormContainer.style.display = 'none';
+  if (helloSection) helloSection.style.display = 'none';
+
+  // show feeding-area wrapper
+  if (feedingArea) {
+    feedingArea.style.display = ''; // let CSS control layout
+    feedingArea.setAttribute('aria-hidden', 'false');
   }
-  // Reveal footer if needed
-  if (footerMenu) footerMenu.classList.add('visible');
+
+  // hide all screens first
+  [feedingScreen, learnScreen, overviewScreen].forEach(s => {
+    if (!s) return;
+    s.style.display = 'none';
+    s.setAttribute('aria-hidden', 'true');
+  });
+
+  // show selected screen
+  const target = document.getElementById(screenId);
+  if (target) {
+    target.style.display = '';
+    target.setAttribute('aria-hidden', 'false');
+  }
 }
 
-function closeFeedOverlay() {
-  // For now simply hide the overlay and keep feeding-area inside the main app
-  if (feedWindow) {
-    feedWindow.style.display = 'none';
-    feedWindow.setAttribute('aria-hidden', 'true');
+function showHome() {
+  // show worm + hello
+  if (wormContainer) wormContainer.style.display = '';
+  if (helloSection) helloSection.style.display = '';
+
+  // hide feeding-area and contained screens
+  if (feedingArea) {
+    feedingArea.style.display = 'none';
+    feedingArea.setAttribute('aria-hidden', 'true');
   }
+  [feedingScreen, learnScreen, overviewScreen].forEach(s => {
+    if (!s) return;
+    s.style.display = 'none';
+    s.setAttribute('aria-hidden', 'true');
+  });
 }
 
 // Attach actions for the footer buttons referenced in the HTML
-window.feedAction = function () {
-  openFeedOverlay();
-};
-window.learnAction = function () {
-  // placeholder: keep layout stable, show footer
-  ensureFeedingAreaInApp();
-};
-window.overviewAction = function () {
-  ensureFeedingAreaInApp();
-};
+window.feedAction = function () { showScreen('feedingScreen'); };
+window.learnAction = function () { showScreen('learnScreen'); };
+window.overviewAction = function () { showScreen('overviewScreen'); };
 
 if (feedBtn) feedBtn.addEventListener('click', window.feedAction);
+const learnBtn = document.getElementById('learnBtn');
+const overviewBtn = document.getElementById('overviewBtn');
+if (learnBtn) learnBtn.addEventListener('click', window.learnAction);
+if (overviewBtn) overviewBtn.addEventListener('click', window.overviewAction);
 if (closeFeedWindow) closeFeedWindow.addEventListener('click', closeFeedOverlay);
+
+// start on home
+showHome();
 });
