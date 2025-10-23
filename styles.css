@@ -123,8 +123,8 @@ body {
   max-width: 520px;
 
   height: 84px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
-  border: 2px solid var(--rim-color);
+  background: var(--bg-color);
+  border: 0px solid var(--rim-color);
   border-radius: 24px;
   display: flex;
   align-items: center;
