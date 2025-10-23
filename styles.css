@@ -330,3 +330,9 @@ body {
   height: auto;
   margin-bottom: 0.5rem;
 }
+
+.hidden {
+  display: none !important;
+  pointer-events: none;
+  user-select: none;
+}

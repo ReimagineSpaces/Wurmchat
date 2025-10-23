@@ -207,49 +207,60 @@ function ensureFeedingAreaInApp() {
 // Show one of the app screens (feeding / learn / overview).
 // Hides worm video + hello section while a screen is active.
 function showScreen(screenId) {
-  // hide worm + hello
-  if (wormContainer) wormContainer.style.display = 'none';
-  if (helloSection) helloSection.style.display = 'none';
+  // keep elements in DOM — toggle visibility only
+  if (wormContainer) wormContainer.classList.add('hidden');
+  if (helloSection) helloSection.classList.add('hidden');
 
-  // show feeding-area wrapper (force visible)
+  // ensure feeding-area is inside #app and visible
+  ensureFeedingAreaInApp();
   if (feedingArea) {
-    feedingArea.style.display = 'flex'; // <-- force visible (was still hidden by CSS)
+    feedingArea.classList.remove('hidden');
+    feedingArea.style.display = 'flex';
     feedingArea.setAttribute('aria-hidden', 'false');
-    // ensure vertical layout inside feeding area
-    feedingArea.style.flexDirection = 'column';
   }
 
-  // hide all screens first
+  // hide all screens and then show target
   [feedingScreen, learnScreen, overviewScreen].forEach(s => {
     if (!s) return;
-    s.style.display = 'none';
+    s.classList.add('hidden');
     s.setAttribute('aria-hidden', 'true');
   });
-
-  // show selected screen
   const target = document.getElementById(screenId);
   if (target) {
-    target.style.display = ''; // let the section's default layout (block/section) apply
+    target.classList.remove('hidden');
     target.setAttribute('aria-hidden', 'false');
+    // make sure target uses natural layout
+    target.style.display = '';
+  }
+
+  // pause worm video while in a screen view
+  if (wormVideo && !wormVideo.paused) {
+    wormVideo.pause();
   }
 }
 
 function showHome() {
-  // show worm + hello
-  if (wormContainer) wormContainer.style.display = '';
-  if (helloSection) helloSection.style.display = '';
+  // restore worm + hello visibility
+  if (wormContainer) wormContainer.classList.remove('hidden');
+  if (helloSection) helloSection.classList.remove('hidden');
 
-  // hide feeding-area and contained screens
+  // hide feeding-area and its screens
   if (feedingArea) {
-    feedingArea.style.display = 'none'; // hide again
+    feedingArea.classList.add('hidden');
+    feedingArea.style.display = 'none';
     feedingArea.setAttribute('aria-hidden', 'true');
-    feedingArea.style.flexDirection = '';
   }
   [feedingScreen, learnScreen, overviewScreen].forEach(s => {
     if (!s) return;
-    s.style.display = 'none';
+    s.classList.add('hidden');
     s.setAttribute('aria-hidden', 'true');
+    s.style.display = 'none';
   });
+
+  // resume worm video on home (if available)
+  if (wormVideo && wormVideo.paused) {
+    try { wormVideo.play(); } catch (e) { /* autoplay may be blocked; ignore */ }
+  }
 }
 
 // Attach actions for the footer buttons referenced in the HTML
