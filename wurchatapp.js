@@ -132,18 +132,60 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- Cups (create only once)
+  // cup definitions: each has a distinct empty image and a corresponding full image
+  const cupDefs = [
+    { empty: "static/icons/cup.png",       full: "static/icons/cup_full.png"      }, // 1 cup (empty = cup.png)
+    { empty: "static/icons/2cups_empty.png", full: "static/icons/2cups_full.png"   }, // 2 cups
+    { empty: "static/icons/3cups_empty.png", full: "static/icons/3cups_full.png"   }  // 3 cups
+  ];
+
+  // fallback empty image if a specific empty file is missing
+  const EMPTY_FALLBACK = "static/icons/cup.png";
+
+  let selectedCupIndex = null; // 0..2 or null
+
+  function setCupToEmpty(imgEl, def) {
+    imgEl.src = def.empty || EMPTY_FALLBACK;
+    // if specific empty image 404s, use fallback
+    imgEl.onerror = () => { imgEl.onerror = null; imgEl.src = EMPTY_FALLBACK; };
+    imgEl.classList.remove('selected');
+    imgEl.dataset.state = "empty";
+  }
+
+  function setCupToFull(imgEl, def) {
+    imgEl.src = def.full;
+    imgEl.onerror = () => { imgEl.onerror = null; /* leave broken if full missing */ };
+    imgEl.classList.add('selected');
+    imgEl.dataset.state = "full";
+  }
+
   if (cupContainer && cupContainer.children.length === 0) {
-    for (let i = 1; i <= 3; i++) {
+    cupDefs.forEach((def, idx) => {
       const cup = document.createElement("img");
-      cup.src = "static/foods/cup.jpg";
       cup.classList.add('cup');
-      cup.dataset.amount = i;
+      cup.dataset.amount = idx + 1;
+      setCupToEmpty(cup, def);
+
       cup.addEventListener("click", () => {
-        document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
-        cup.classList.add("selected");
+        // No effect if chopping board is empty
+        if (!selectedFoods || selectedFoods.length === 0) return;
+
+        // If this cup is already selected, do nothing
+        if (selectedCupIndex === idx) return;
+
+        // Clear previous selected cup (set it back to empty)
+        if (selectedCupIndex !== null) {
+          const prev = cupContainer.children[selectedCupIndex];
+          if (prev) setCupToEmpty(prev, cupDefs[selectedCupIndex]);
+        }
+
+        // Set this cup to full
+        setCupToFull(cup, def);
+        selectedCupIndex = idx;
       });
+
       cupContainer.appendChild(cup);
-    }
+    });
   }
 
   // --- Feed done action (single handler)

@@ -255,14 +255,12 @@ body {
 
 /* ensure food items sit nicely inside the white box */
 .food-item {
-  width: clamp(72px, 18%, 120px);
-  display: inline-block;
-  vertical-align: middle;
-  object-fit: cover;
-  border-radius: clamp(6px, 2vw, 12px);
-  background: #fff;
-  box-sizing: border-box;
-  padding: 4px;
+  width: calc((100% - 4 * 10px) / 3.5);
+  height: auto;
+  object-fit: contain;
+  cursor: pointer;
+  border-radius: 15px;
+  transition: transform 0.2s;
 }
 
 /* keep dots below the white box (if using absolute positioning) */
