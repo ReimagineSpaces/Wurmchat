@@ -170,7 +170,7 @@ body {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  color: #4b3a1f;
+  color: var(--btn-hover);
 }
 .menu-btn img {
   width: 44px;
@@ -375,7 +375,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   width: 95%;
   max-width: 520px;
   position: fixed;
-  bottom: 16px;
+  bottom: 1px;
   box-sizing: border-box;
   z-index: 9999;
   pointer-events: auto;
@@ -395,6 +395,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   width: 100%;
   box-sizing: border-box;
   min-width: 0;
+  background: white;
 }
 .food-item {
   width: clamp(72px, 18%, 120px);
