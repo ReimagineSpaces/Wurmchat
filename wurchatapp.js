@@ -178,16 +178,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
- // feedDone handler 
+  // ensure cupDefs, setCupToEmpty and selectedCupIndex exist in this scope
+
+  // reset all cups to their empty images and clear selection index
+  function resetCups() {
+    if (!cupContainer) return;
+    selectedCupIndex = null;
+    Array.from(cupContainer.children).forEach((child, idx) => {
+      const def = (typeof cupDefs !== 'undefined' && cupDefs[idx]) ? cupDefs[idx] : null;
+      if (def) setCupToEmpty(child, def);
+      else {
+        child.src = typeof EMPTY_FALLBACK !== 'undefined' ? EMPTY_FALLBACK : child.src;
+        child.classList.remove('selected');
+        child.dataset.state = 'empty';
+      }
+    });
+  }
+
+  // replace existing feedDone handler to capture state before clearing UI
   feedDone?.addEventListener('click', async () => {
     const payload = collectFeedingState();
-    // send in background; awaiting helps reliability but won't block UI for long
     await sendFeedingToThingsboard(payload);
 
-    // existing cleanup behavior
+    // clear board and reset cups BEFORE returning home
     choppingBoard && (choppingBoard.innerHTML = "");
-    document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
     clearChoppingBoard();
+    resetCups();
+
     showHome();
   })
 
