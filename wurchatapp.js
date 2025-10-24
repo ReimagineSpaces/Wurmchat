@@ -82,17 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       foodCarousel.appendChild(img);
     });
 
-    // initialize Glider safely if library loaded
-    if (typeof Glider !== 'undefined') {
-      new Glider(foodCarousel, {
-        slidesToShow: 3.5,
-        slidesToScroll: 1,
-        draggable: true,
-        dots: '#resp-dots',
-        arrows: { prev: '.glider-prev', next: '.glider-next' },
-        rewind: true
-      });
-    }
+    // Glider init removed here — initialization handled by ensureGlider() below
   }
 
   // Add/Remove food on chopping board
@@ -188,13 +178,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Feed done action (single handler)
-  feedDone?.addEventListener('click', () => {
+ // feedDone handler 
+  feedDone?.addEventListener('click', async () => {
+    const payload = collectFeedingState();
+    // send in background; awaiting helps reliability but won't block UI for long
+    await sendFeedingToThingsboard(payload);
+
+    // existing cleanup behavior
     choppingBoard && (choppingBoard.innerHTML = "");
     document.querySelectorAll("#cupContainer img").forEach(c => c.classList.remove("selected"));
     clearChoppingBoard();
     showHome();
-  });
+  })
 
   function clearChoppingBoard() {
     choppingBoard && (choppingBoard.innerHTML = "");
@@ -403,13 +398,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // start on home
-  showHome();
-
-  // placeholder ThingsBoard endpoint -- replace with your server + device token
-  const THINGSBOARD_ENDPOINT = 'https://YOUR_THINGSBOARD_SERVER/api/v1/YOUR_DEVICE_ACCESS_TOKEN/telemetry';
-
-  // collect which foods are on the chopping board and which cup is selected
+   // collect which foods are on the chopping board and which cup is selected
   function collectFeedingState() {
     const foodsOnBoard = [];
-    if
+    if (choppingBoard) {
+      choppingBoard.querySelectorAll('img').forEach(img => {
+        const name = img.dataset.name || img.getAttribute('data-name') || img.alt || img.title || img.src;
+        foodsOnBoard.push(name);
+      });
+    }
+
+    const selectedCupEl = document.querySelector('#cupContainer img.selected');
+    const selectedCup = selectedCupEl ? (selectedCupEl.dataset.amount || selectedCupEl.getAttribute('data-amount') || null) : null;
+
+    return {
+      timestamp: new Date().toISOString(),
+      foods: foodsOnBoard,
+      cup: selectedCup
+    };
+  }
+
+  // send feeding state to ThingsBoard (placeholder implementation)
+  async function sendFeedingToThingsboard(payload) {
+    // NOTE: Replace THINGSBOARD_ENDPOINT with the correct URL and add auth header if needed.
+    try {
+      console.log('Sending feeding payload to ThingsBoard:', payload);
+      await fetch(THINGSBOARD_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+          // add 'X-Authorization': 'Bearer <TOKEN>' if your ThingsBoard requires it
+        },
+        body: JSON.stringify(payload),
+        keepalive: true
+      });
+      console.log('Feeding payload sent');
+    } catch (err) {
+      console.warn('Failed to send feeding payload:', err);
+    }
+  }
+
+ 
+});
