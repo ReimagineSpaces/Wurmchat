@@ -405,4 +405,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // start on home
   showHome();
-});
+
+  // placeholder ThingsBoard endpoint -- replace with your server + device token
+  const THINGSBOARD_ENDPOINT = 'https://YOUR_THINGSBOARD_SERVER/api/v1/YOUR_DEVICE_ACCESS_TOKEN/telemetry';
+
+  // collect which foods are on the chopping board and which cup is selected
+  function collectFeedingState() {
+    const foodsOnBoard = [];
+    if
